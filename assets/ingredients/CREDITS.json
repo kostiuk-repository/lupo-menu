@@ -1,0 +1,91 @@
+{
+  "source": "Twemoji 14.0.2 by Twitter, Inc. and other contributors",
+  "license": "CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
+  "project": "https://github.com/twitter/twemoji",
+  "items": [
+    {
+      "id": "stracciatella",
+      "file": "stracciatella.svg",
+      "emoji": "🧀",
+      "codepoint": "1f9c0"
+    },
+    {
+      "id": "pomodorini",
+      "file": "pomodorini.svg",
+      "emoji": "🍅",
+      "codepoint": "1f345"
+    },
+    {
+      "id": "basilico",
+      "file": "basilico.svg",
+      "emoji": "🌿",
+      "codepoint": "1f33f"
+    },
+    {
+      "id": "olio-oliva",
+      "file": "olio-oliva.svg",
+      "emoji": "🫒",
+      "codepoint": "1fad2"
+    },
+    {
+      "id": "pasta-fresca",
+      "file": "pasta-fresca.svg",
+      "emoji": "🍝",
+      "codepoint": "1f35d"
+    },
+    {
+      "id": "ricotta",
+      "file": "ricotta.svg",
+      "emoji": "🥣",
+      "codepoint": "1f963"
+    },
+    {
+      "id": "parmigiano",
+      "file": "parmigiano.svg",
+      "emoji": "🧀",
+      "codepoint": "1f9c0"
+    },
+    {
+      "id": "spinaci",
+      "file": "spinaci.svg",
+      "emoji": "🥬",
+      "codepoint": "1f96c"
+    },
+    {
+      "id": "burro",
+      "file": "burro.svg",
+      "emoji": "🧈",
+      "codepoint": "1f9c8"
+    },
+    {
+      "id": "mascarpone",
+      "file": "mascarpone.svg",
+      "emoji": "🍮",
+      "codepoint": "1f36e"
+    },
+    {
+      "id": "caffe",
+      "file": "caffe.svg",
+      "emoji": "☕",
+      "codepoint": "2615"
+    },
+    {
+      "id": "savoiardi",
+      "file": "savoiardi.svg",
+      "emoji": "🍪",
+      "codepoint": "1f36a"
+    },
+    {
+      "id": "cacao",
+      "file": "cacao.svg",
+      "emoji": "🍫",
+      "codepoint": "1f36b"
+    },
+    {
+      "id": "uova",
+      "file": "uova.svg",
+      "emoji": "🥚",
+      "codepoint": "1f95a"
+    }
+  ]
+}

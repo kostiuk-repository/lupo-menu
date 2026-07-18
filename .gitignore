@@ -1,0 +1,15 @@
+# JetBrains IDEs
+.idea/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node (про всяк випадок, якщо з'явиться build tooling)
+node_modules/
