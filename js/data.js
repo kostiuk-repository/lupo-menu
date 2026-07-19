@@ -1,11 +1,19 @@
 // Dane menu Lupo: dania + główne składniki do testów (ingIds) + komponenty szczegółowe + tłumaczenia + alergeny + wskazówki.
 // Ikony składników: assets/ingredients/*.svg (Twemoji 14.0.2, CC-BY 4.0).
+// Zdjęcia dań: assets/photos/*.jpg wyciągnięte z menu.pdf.
 
 export const CATS = [
   { key: 'antipasti', title: 'Antipasti', sub: 'Przystawki' },
   { key: 'pasta', title: 'Pasta', sub: 'Makarony' },
   { key: 'secondi', title: 'Secondi', sub: 'Dania główne' },
   { key: 'dolce', title: 'Dolce', sub: 'Desery' }
+];
+
+export const DISH_PHOTOS = [
+  'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11',
+  'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9',
+  's1', 's2', 's3', 's4',
+  'd1', 'd2', 'd3', 'd4', 'd5', 'd6'
 ];
 
 export const TIPS = [

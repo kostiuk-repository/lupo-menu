@@ -1,8 +1,9 @@
-import { CATS, TIPS, SERVICE_RULES, ING, ITEMS } from './data.js';
+import { CATS, TIPS, SERVICE_RULES, ING, ITEMS, DISH_PHOTOS } from './data.js';
 
 const STORAGE_KEY = 'lupo_nauka_v2';
 const BATCH_SIZE = 3;
 const itemsById = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+const DISH_PHOTO_SET = new Set(DISH_PHOTOS);
 
 ITEMS.forEach(i => {
   let t = i.desc;
@@ -14,6 +15,7 @@ ITEMS.forEach(i => {
     t = cut + '…';
   }
   i.descShort = t;
+  i.hasPhoto = DISH_PHOTO_SET.has(i.id);
 });
 
 function loadSaved() {
@@ -39,7 +41,8 @@ const state = {
   t9Questions: null, t9Idx: 0, t9Score: 0, t9Results: [], t9Sel: null, t9MultiSel: {}, t9Checked: false, t9Drag: { placed: {} }, t9Done: false,
   _t9Batch: null,
   match: null,
-  tipIdx: Math.floor(Math.random() * TIPS.length)
+  tipIdx: Math.floor(Math.random() * TIPS.length),
+  photoModalId: null
 };
 
 function byId(id) { return itemsById[id]; }
@@ -71,12 +74,20 @@ function catSub(k) { const c = CATS.find(x => x.key === k); return c ? c.sub : '
 function vegLabel(v) { return v === 'vg' ? 'wegańskie (vg)' : 'wegetariańskie (v)'; }
 function dotColor(box) { return box >= 4 ? '#5E7D57' : (box >= 2 ? 'var(--accent)' : '#D6C9B6'); }
 
-// ---------- navigation ----------
+// ---------- navigation & photo modal ----------
 function go(screen) {
   if (screen === 'learn') ensureLearn();
   if (screen === 'test') ensureTest();
   if (screen === 'match') ensureMatch();
   state.screen = screen;
+  render();
+}
+function openPhoto(id) {
+  state.photoModalId = id;
+  render();
+}
+function closePhoto() {
+  state.photoModalId = null;
   render();
 }
 
@@ -402,6 +413,10 @@ function renderLearn() {
     ? `<span class="pasta-pill">${item.pastaType === 'jajeczny' ? '🥚 Makaron jajeczny' : '🌾 Makaron bezjajeczny'}</span>`
     : '';
 
+  const photoBtn = item.hasPhoto
+    ? `<button class="btn-photo" data-action="openPhoto" data-id="${item.id}">📷 Zobacz zdjęcie</button>`
+    : '';
+
   const serviceNotesHtml = item.serviceNotes
     ? `<div class="card service-note-box">
         <div class="kicker-sm" style="color:#B07219;">💡 Wskazówki serwisu i uwagi</div>
@@ -428,6 +443,7 @@ function renderLearn() {
         ${item.veg ? `<span class="veg-badge">${esc(vegLabel(item.veg))}</span>` : ''}
         ${pastaBadge}
         <span style="font-size:13px;color:#9A9086;">Cena: <b style="color:#3A342E;">${esc(item.price)} zł</b></span>
+        ${photoBtn}
       </div>
     </div>
 
@@ -596,6 +612,10 @@ function renderBrowse() {
         ? `<span class="pasta-pill-sm">${i.pastaType === 'jajeczny' ? '🥚 jajeczny' : '🌾 bezjajeczny'}</span>`
         : '';
 
+      const photoBtn = i.hasPhoto
+        ? `<button class="btn-photo" data-action="openPhoto" data-id="${i.id}">📷 Zobacz zdjęcie</button>`
+        : '';
+
       const compSummary = i.components ? i.components.map(comp => {
         const ingNames = comp.ingIds.map(iid => (ING[iid] ? ING[iid].pl : iid)).join(', ');
         return `<div style="font-size:11.5px;color:#5E554B;line-height:1.4;"><strong style="color:#7A4E1B;">${esc(comp.name)}:</strong> ${esc(ingNames)}</div>`;
@@ -614,6 +634,7 @@ function renderBrowse() {
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px;">
             ${i.veg ? `<span class="veg-badge">${esc(vegLabel(i.veg))}</span>` : ''}
             ${pastaTag}
+            ${photoBtn}
           </div>
 
           ${compSummary ? `<div style="background:#FAF6F0;border-left:2.5px solid #C1741F;padding:7px 10px;border-radius:6px;margin-top:3px;display:flex;flex-direction:column;gap:3px;">${compSummary}</div>` : ''}
@@ -643,6 +664,27 @@ function renderBrowse() {
   </div>`;
 }
 
+function renderPhotoModal() {
+  if (!state.photoModalId) return '';
+  const item = byId(state.photoModalId);
+  if (!item || !item.hasPhoto) return '';
+
+  return `<div class="photo-modal-overlay" data-action="closePhoto">
+    <div class="photo-modal-content" onclick="event.stopPropagation()">
+      <button class="photo-modal-close" data-action="closePhoto" title="Zamknij">✕</button>
+      <img class="photo-modal-img" src="assets/photos/${item.id}.jpg" alt="${esc(item.name)}" />
+      <div class="photo-modal-info">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
+          <span class="serif" style="font-size:20px;font-weight:600;color:#2A2521;">${esc(item.name)}</span>
+          <span style="font-size:15px;font-weight:700;color:#C1741F;flex:none;">${esc(item.price)} zł</span>
+        </div>
+        <div class="serif" style="font-style:italic;font-size:13.5px;color:#A08A6E;">${esc(item.pron)}</div>
+        <div style="font-size:12.5px;color:#6E655C;margin-top:4px;line-height:1.4;">🇵🇱 ${esc(item.tr.name.pl)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
 const TITLES = { home: 'Twój postęp', learn: 'Nauka dania', test: 'Test', match: 'Dopasuj', browse: 'Karta Lupo' };
 const NAV_DEFS = [['home', 'Postęp'], ['learn', 'Nauka'], ['test', 'Test'], ['match', 'Dopasuj'], ['browse', 'Karta']];
 
@@ -668,6 +710,7 @@ function render() {
     </header>
     <main class="app-main">${body}</main>
     <nav class="app-nav">${navHtml}</nav>
+    ${renderPhotoModal()}
   `;
 }
 
@@ -688,7 +731,9 @@ const ACTIONS = {
   nextQuestion: () => nextQuestion(),
   pickLeft: (id) => pickLeft(id),
   pickRight: (id) => pickRight(id),
-  newMatchRound: () => { buildMatch(); render(); }
+  newMatchRound: () => { buildMatch(); render(); },
+  openPhoto: (id) => openPhoto(id),
+  closePhoto: () => closePhoto()
 };
 
 root.addEventListener('click', (e) => {
@@ -698,6 +743,12 @@ root.addEventListener('click', (e) => {
   const id = el.getAttribute('data-id');
   const fn = ACTIONS[action];
   if (fn) fn(id);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && state.photoModalId) {
+    closePhoto();
+  }
 });
 
 // pointer-based drag & drop for the "drag" question type
