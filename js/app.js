@@ -1,4 +1,4 @@
-import { CATS, TIPS, ING, ITEMS } from './data.js';
+import { CATS, TIPS, SERVICE_RULES, ING, ITEMS } from './data.js';
 
 const STORAGE_KEY = 'lupo_nauka_v2';
 const BATCH_SIZE = 3;
@@ -69,8 +69,6 @@ function record(id, correct) {
 function catTitle(k) { const c = CATS.find(x => x.key === k); return c ? c.title : k; }
 function catSub(k) { const c = CATS.find(x => x.key === k); return c ? c.sub : ''; }
 function vegLabel(v) { return v === 'vg' ? 'wegańskie (vg)' : 'wegetariańskie (v)'; }
-function boxLabel(box) { return box >= 4 ? 'Opanowane' : (box >= 2 ? 'W trakcie' : 'Do nauki'); }
-function boxTagClass(box) { return box >= 4 ? 'tag-good' : (box >= 2 ? 'tag-mid' : 'tag-neutral'); }
 function dotColor(box) { return box >= 4 ? '#5E7D57' : (box >= 2 ? 'var(--accent)' : '#D6C9B6'); }
 
 // ---------- navigation ----------
@@ -126,7 +124,7 @@ function selectLearnCat(key) {
   go('learn');
 }
 
-// ---------- test (9 pytań, generyczne dla dowolnej trójki dań) ----------
+// ---------- test ----------
 function ensureTest() {
   const batchKey = currentBatch().join(',');
   if (!state.t9Questions || state.t9Done || state._t9Batch !== batchKey) buildTest9();
@@ -207,7 +205,7 @@ function nextQuestion() {
   render();
 }
 
-// ---------- match (dopasuj nazwę do opisu) ----------
+// ---------- match ----------
 function ensureMatch() { const pool = poolIds(); const m = state.match; const valid = m && m.ids.every(id => pool.indexOf(id) >= 0); if (!valid) buildMatch(); }
 function buildMatch() {
   const pool = poolIds(); const n = Math.min(5, pool.length);
@@ -246,7 +244,7 @@ function resetProgress() {
 const root = document.getElementById('app');
 
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
-function ico(file) { return 'assets/ingredients/' + file; }
+function ico(file) { return 'assets/ingredients/' + (file || 'verdure.svg'); }
 
 function renderHome() {
   const total = ITEMS.length;
@@ -254,7 +252,7 @@ function renderHome() {
   const learning = ITEMS.filter(i => { const p = st(i.id); return p.seen > 0 && p.box < 4; }).length;
   const notStarted = ITEMS.filter(i => st(i.id).seen === 0).length;
   const overallPct = Math.round(mastered / total * 100);
-  const headline = mastered === total ? 'Wszystko opanowane. Brawo!' : (mastered > 0 ? 'Dobra robota, tak trzymaj!' : 'Zacznijmy naukę menu');
+  const headline = mastered === total ? 'Wszystko opanowane. Brawo!' : (mastered > 0 ? 'Dobra robota, tak trzymaj!' : 'Zacznijmy naukę menu Lupo');
   const tip = TIPS[state.tipIdx || 0];
 
   const catsHtml = CATS.map(c => {
@@ -291,13 +289,24 @@ function renderHome() {
         </div>`).join('')}
     </div>` : `<div style="text-align:center;font-size:12.5px;line-height:1.5;color:#B0A69A;padding:2px 10px;">Twoje słabe miejsca pojawią się tutaj po pierwszych ćwiczeniach.</div>`;
 
+  const rulesHtml = SERVICE_RULES.map(r => `
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFFFF;border:1px solid #EAE2D5;padding:11px 13px;border-radius:14px;">
+      <span style="font-size:15px;line-height:1;margin-top:2px;">✨</span>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:13.5px;font-weight:600;color:#2A2521;">${esc(r.title)}</div>
+        <div style="font-size:12px;color:#6E655C;line-height:1.45;">${esc(r.desc)}</div>
+      </div>
+    </div>
+  `).join('');
+
   const batchLabel = `Grupa ${catBatchIdx(state.learnCat) + 1} / ${catBatches(state.learnCat).length} w kategorii „${catTitle(state.learnCat)}”`;
 
   return `<div style="display:flex;flex-direction:column;gap:15px;">
-    <div class="card card-tight" style="display:flex;gap:11px;align-items:flex-start;">
-      <span class="kicker-sm" style="flex:none;margin-top:2px;">Wskazówka</span>
+    <div class="card card-tight" style="display:flex;gap:11px;align-items:flex-start;background:#FAF5ED;">
+      <span class="kicker-sm" style="flex:none;margin-top:2px;color:#B07219;">Wskazówka dnia</span>
       <span style="font-size:13px;line-height:1.45;color:#6E5A3E;">${esc(tip)}</span>
     </div>
+
     <div class="card" style="display:flex;align-items:center;gap:16px;">
       <div class="home-ring-wrap">
         <div class="ring" style="background:conic-gradient(var(--accent) ${overallPct}%, #E9DFCF ${overallPct}%);"></div>
@@ -314,6 +323,11 @@ function renderHome() {
           <span class="tag tag-neutral">${notStarted} nowe</span>
         </div>
       </div>
+    </div>
+
+    <div class="card" style="display:flex;flex-direction:column;gap:11px;background:#FCFAF6;">
+      <div class="kicker">Zasady serwisu w Lupo (z PDF)</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">${rulesHtml}</div>
     </div>
 
     <div class="card" style="display:flex;flex-direction:column;gap:6px;">
@@ -349,14 +363,51 @@ function renderLearn() {
   const nextLabel = learnIdx === batch.length - 1 ? 'Rozpocznij test →' : 'Dalej →';
   const catSwitchHtml = CATS.map(c => `<button class="pill-toggle ${c.key === state.learnCat ? 'on' : ''}" data-action="selectLearnCat" data-id="${c.key}">${esc(c.title)}</button>`).join('');
 
-  const ingHtml = item.ingIds.map(iid => {
-    const ing = ING[iid];
-    return `<div class="ing-card">
-      <img src="${ico(ing.icon)}" alt="${esc(ing.it)}" />
-      <div class="ing-name">${esc(ing.it)}</div>
-      <div class="ing-tr">🇵🇱${esc(ing.pl)} · 🇬🇧${esc(ing.en)}</div>
-    </div>`;
-  }).join('');
+  let componentsHtml = '';
+  if (item.components && item.components.length) {
+    componentsHtml = item.components.map(comp => {
+      const compIngs = comp.ingIds.map(iid => {
+        const ing = ING[iid] || { it: iid, pl: iid, en: iid, icon: 'verdure.svg' };
+        return `<div class="ing-card">
+          <img src="${ico(ing.icon)}" alt="${esc(ing.it)}" />
+          <div class="ing-name">${esc(ing.it)}</div>
+          <div class="ing-tr">🇵🇱 ${esc(ing.pl)} · 🇬🇧 ${esc(ing.en)}</div>
+        </div>`;
+      }).join('');
+      return `<div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="font-size:11.5px;font-weight:700;color:#8C5E29;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:5px;">
+          <span style="width:6px;height:6px;border-radius:50%;background:#C1741F;display:inline-block;"></span>
+          ${esc(comp.name)}
+        </div>
+        <div class="ing-grid">${compIngs}</div>
+      </div>`;
+    }).join('');
+  } else {
+    const ingCards = item.ingIds.map(iid => {
+      const ing = ING[iid] || { it: iid, pl: iid, en: iid, icon: 'verdure.svg' };
+      return `<div class="ing-card">
+        <img src="${ico(ing.icon)}" alt="${esc(ing.it)}" />
+        <div class="ing-name">${esc(ing.it)}</div>
+        <div class="ing-tr">🇵🇱 ${esc(ing.pl)} · 🇬🇧 ${esc(ing.en)}</div>
+      </div>`;
+    }).join('');
+    componentsHtml = `<div class="ing-grid">${ingCards}</div>`;
+  }
+
+  const allergensHtml = (item.allergens && item.allergens.length)
+    ? item.allergens.map(a => `<span class="allergen-pill">${esc(a)}</span>`).join('')
+    : `<span class="allergen-pill none">brak alergenów</span>`;
+
+  const pastaBadge = item.pastaType
+    ? `<span class="pasta-pill">${item.pastaType === 'jajeczny' ? '🥚 Makaron jajeczny' : '🌾 Makaron bezjajeczny'}</span>`
+    : '';
+
+  const serviceNotesHtml = item.serviceNotes
+    ? `<div class="card service-note-box">
+        <div class="kicker-sm" style="color:#B07219;">💡 Wskazówki serwisu i uwagi</div>
+        <div style="font-size:13.5px;line-height:1.5;color:#4A3F35;margin-top:6px;">${esc(item.serviceNotes)}</div>
+      </div>`
+    : '';
 
   return `<div style="display:flex;flex-direction:column;gap:15px;">
     <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">${catSwitchHtml}</div>
@@ -366,31 +417,39 @@ function renderLearn() {
       <span style="font-size:12px;color:#9A9086;">${esc(catTitle(item.cat))}</span>
     </div>
 
-    <div class="card" style="padding:26px 20px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 10px 26px rgba(42,37,33,.05);">
+    <div class="card" style="padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 10px 26px rgba(42,37,33,.05);">
       <div class="kicker-sm">${esc(catSub(item.cat))}</div>
-      <div class="serif" style="font-size:29px;font-weight:600;color:#2A2521;line-height:1.15;">${esc(item.name)}</div>
+      <div class="serif" style="font-size:28px;font-weight:600;color:#2A2521;line-height:1.15;">${esc(item.name)}</div>
       <div class="serif" style="font-style:italic;font-size:15px;color:#A08A6E;">${esc(item.pron)}</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;font-size:11.5px;color:#9A9086;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px;font-size:11.5px;color:#9A9086;">
         <span>🇵🇱 ${esc(item.tr.name.pl)}</span><span>🇬🇧 ${esc(item.tr.name.en)}</span>
       </div>
-      <div style="display:flex;gap:10px;align-items:center;margin-top:10px;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;margin-top:10px;">
         ${item.veg ? `<span class="veg-badge">${esc(vegLabel(item.veg))}</span>` : ''}
+        ${pastaBadge}
         <span style="font-size:13px;color:#9A9086;">Cena: <b style="color:#3A342E;">${esc(item.price)} zł</b></span>
       </div>
     </div>
 
     <div class="card" style="background:#F7F2E9;display:flex;flex-direction:column;gap:8px;">
-      <div class="kicker-sm">Opis</div>
+      <div class="kicker-sm">Opis z karty menu</div>
       <div style="font-size:15px;line-height:1.55;color:#3A342E;">${esc(item.desc)}</div>
       <div style="font-size:12px;line-height:1.5;color:#9A9086;">🇬🇧 ${esc(item.tr.desc.en)}</div>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div class="kicker">Składniki</div>
-      <div class="ing-grid">${ingHtml}</div>
+    ${serviceNotesHtml}
+
+    <div class="card" style="display:flex;flex-direction:column;gap:8px;background:#FFFBF5;">
+      <div class="kicker-sm" style="color:#8A4B29;">⚠️ Alergeny w daniu</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">${allergensHtml}</div>
     </div>
 
-    <div class="btn-row" style="padding-top:2px;">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="kicker">Składniki z podziałem na elementy</div>
+      ${componentsHtml}
+    </div>
+
+    <div class="btn-row" style="padding-top:4px;">
       ${isFirst ? '<div></div>' : '<button class="btn btn-outline" data-action="learnPrev">← Wstecz</button>'}
       <button class="btn btn-primary" data-action="learnNext">${nextLabel}</button>
     </div>
@@ -410,7 +469,7 @@ function renderTest() {
   let body = '';
   if (q.type === 'single') {
     const optionsHtml = q.options.map(oid => {
-      const ing = ING[oid];
+      const ing = ING[oid] || { it: oid, pl: oid };
       let cls = 'option';
       if (!checked) cls += (state.t9Sel === oid ? ' sel' : '');
       else if (oid === q.correct) cls += ' correct';
@@ -423,7 +482,7 @@ function renderTest() {
       ${(!checked && state.t9Sel != null) ? '<button class="btn btn-dark btn-block" data-action="checkSingle">Sprawdź</button>' : ''}`;
   } else if (q.type === 'multi') {
     const optionsHtml = q.options.map(oid => {
-      const ing = ING[oid];
+      const ing = ING[oid] || { it: oid, pl: oid };
       const sel = !!state.t9MultiSel[oid];
       const isCorrect = q.correct.indexOf(oid) >= 0;
       let cls = 'option multi';
@@ -439,14 +498,14 @@ function renderTest() {
     const placed = state.t9Drag.placed;
     const batchDishes = currentBatch().map(byId);
     const chipsHtml = q.chips.filter(c => !placed[c]).map(c => {
-      const ing = ING[c];
+      const ing = ING[c] || { it: c, pl: c, icon: 'verdure.svg' };
       return `<button class="drag-chip" data-drag-id="${c}"><img src="${ico(ing.icon)}" /><span>${esc(ing.it)}</span><span class="chip-pl">${esc(ing.pl)}</span></button>`;
     }).join('');
     const zonesHtml = currentBatch().map(id => {
       const it = byId(id);
       const items = q.chips.filter(c => placed[c] && placed[c].zone === id);
       const itemsHtml = items.map(c => {
-        const ing = ING[c];
+        const ing = ING[c] || { it: c, pl: c, icon: 'verdure.svg' };
         const info = placed[c];
         const correctDish = info.ok ? null : batchDishes.find(d => d.ingIds.indexOf(c) >= 0);
         return `<span class="placed-item ${info.ok ? 'ok' : 'bad'}"><img src="${ico(ing.icon)}" /><span class="mark">${info.ok ? '✓' : '✗'}</span>${esc(ing.it)} · ${esc(ing.pl)}${correctDish ? `<span class="hint">→ ${esc(correctDish.name)}</span>` : ''}</span>`;
@@ -529,34 +588,63 @@ function renderMatch() {
 function renderBrowse() {
   const groups = CATS.map(c => {
     const its = ITEMS.filter(i => i.cat === c.key);
-    const itemsHtml = its.map(i => `<div style="display:flex;gap:11px;">
+    const itemsHtml = its.map(i => {
+      const allergens = (i.allergens && i.allergens.length)
+        ? i.allergens.map(a => `<span class="allergen-pill-sm">${esc(a)}</span>`).join('')
+        : `<span class="allergen-pill-sm none">brak</span>`;
+      const pastaTag = i.pastaType
+        ? `<span class="pasta-pill-sm">${i.pastaType === 'jajeczny' ? '🥚 jajeczny' : '🌾 bezjajeczny'}</span>`
+        : '';
+
+      const compSummary = i.components ? i.components.map(comp => {
+        const ingNames = comp.ingIds.map(iid => (ING[iid] ? ING[iid].pl : iid)).join(', ');
+        return `<div style="font-size:11.5px;color:#5E554B;line-height:1.4;"><strong style="color:#7A4E1B;">${esc(comp.name)}:</strong> ${esc(ingNames)}</div>`;
+      }).join('') : '';
+
+      return `<div style="display:flex;gap:11px;background:#FFFFFF;border:1px solid #EAE2D5;border-radius:16px;padding:14px;">
         <span style="width:10px;height:10px;border-radius:50%;background:${dotColor(st(i.id).box)};flex:none;margin-top:6px;"></span>
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
           <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;">
-            <span class="serif" style="font-size:16px;font-weight:600;color:#2A2521;">${esc(i.name)}</span>
-            <span style="font-size:13px;color:#9A9086;white-space:nowrap;flex:none;">${esc(i.price)} zł</span>
+            <span class="serif" style="font-size:16.5px;font-weight:600;color:#2A2521;">${esc(i.name)}</span>
+            <span style="font-size:13.5px;color:#9A9086;white-space:nowrap;flex:none;font-weight:600;">${esc(i.price)} zł</span>
           </div>
-          <div class="serif" style="font-style:italic;font-size:12.5px;color:#B08A5A;">${esc(i.pron)}</div>
-          <div style="font-size:13px;line-height:1.5;color:#6E655C;">${esc(i.desc)}</div>
-          ${i.veg ? `<span class="veg-badge">${esc(vegLabel(i.veg))}</span>` : ''}
+          <div class="serif" style="font-style:italic;font-size:13px;color:#B08A5A;">${esc(i.pron)}</div>
+          <div style="font-size:13px;line-height:1.5;color:#4A433B;">${esc(i.desc)}</div>
+          
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px;">
+            ${i.veg ? `<span class="veg-badge">${esc(vegLabel(i.veg))}</span>` : ''}
+            ${pastaTag}
+          </div>
+
+          ${compSummary ? `<div style="background:#FAF6F0;border-left:2.5px solid #C1741F;padding:7px 10px;border-radius:6px;margin-top:3px;display:flex;flex-direction:column;gap:3px;">${compSummary}</div>` : ''}
+
+          ${i.serviceNotes ? `<div style="font-size:11.5px;line-height:1.4;color:#B07219;background:#FFFDF7;border-left:3px solid #E2A042;padding:5px 8px;border-radius:4px;margin-top:2px;">💡 ${esc(i.serviceNotes)}</div>` : ''}
+
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px;color:#9A9086;">
+            <span>Alergeny:</span>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">${allergens}</div>
+          </div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
+
     return `<div style="display:flex;flex-direction:column;gap:13px;">
-      <div style="display:flex;align-items:baseline;gap:9px;border-bottom:1px solid #E3D9C9;padding-bottom:7px;">
-        <span class="serif" style="font-size:21px;font-weight:600;color:#2A2521;">${esc(c.title)}</span>
-        <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#B08A5A;font-weight:600;">${esc(c.sub)}</span>
+      <div style="display:flex;align-items:baseline;gap:9px;border-bottom:1.5px solid #E3D9C9;padding-bottom:7px;margin-top:6px;">
+        <span class="serif" style="font-size:22px;font-weight:600;color:#2A2521;">${esc(c.title)}</span>
+        <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#B08A5A;font-weight:700;">${esc(c.sub)}</span>
       </div>
-      ${itemsHtml}
+      <div style="display:flex;flex-direction:column;gap:10px;">${itemsHtml}</div>
     </div>`;
   }).join('');
+
   return `<div style="display:flex;flex-direction:column;gap:22px;">
     ${groups}
-    <div style="font-size:11px;line-height:1.5;color:#B0A69A;text-align:center;padding-top:2px;">Kropka po lewej pokazuje poziom opanowania. Pełna lista alergenów dostępna u obsługi.</div>
+    <div style="font-size:11.5px;line-height:1.5;color:#B0A69A;text-align:center;padding-top:4px;">Kropka po lewej wskazuje poziom opanowania w nauce. Dane zebrane ściśle z PDF menu Lupo.</div>
   </div>`;
 }
 
-const TITLES = { home: 'Twój postęp', learn: 'Nauka dania', test: 'Test', match: 'Dopasuj', browse: 'Menu Lupo' };
-const NAV_DEFS = [['home', 'Postęp'], ['learn', 'Nauka'], ['test', 'Test'], ['match', 'Dopasuj'], ['browse', 'Menu']];
+const TITLES = { home: 'Twój postęp', learn: 'Nauka dania', test: 'Test', match: 'Dopasuj', browse: 'Karta Lupo' };
+const NAV_DEFS = [['home', 'Postęp'], ['learn', 'Nauka'], ['test', 'Test'], ['match', 'Dopasuj'], ['browse', 'Karta']];
 
 function render() {
   const mastered = ITEMS.filter(i => st(i.id).box >= 4).length;
