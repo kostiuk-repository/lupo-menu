@@ -34,7 +34,7 @@ const saved = loadSaved();
 const state = {
   screen: 'home',
   prog: saved.prog || {},
-  cats: Object.assign({ antipasti: true, pasta: true, secondi: true, dolce: true }, saved.cats || {}),
+  cats: Object.assign(Object.fromEntries(CATS.map(c => [c.key, true])), saved.cats || {}),
   learnCat: (saved.learnCat && CATS.some(c => c.key === saved.learnCat)) ? saved.learnCat : CATS[0].key,
   catBatchIdx: Object.assign({}, saved.catBatchIdx || {}),
   learnIdx: 0,
