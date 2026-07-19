@@ -2,8 +2,6 @@ import { CATS, TIPS, ING, ITEMS } from './data.js';
 
 const STORAGE_KEY = 'lupo_nauka_v2';
 const BATCH_SIZE = 3;
-const ALL_IDS = ITEMS.map(i => i.id);
-const TOTAL_BATCHES = Math.ceil(ALL_IDS.length / BATCH_SIZE);
 const itemsById = Object.fromEntries(ITEMS.map(i => [i.id, i]));
 
 ITEMS.forEach(i => {
@@ -23,11 +21,11 @@ function loadSaved() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
     const d = JSON.parse(raw);
-    return { prog: d.prog || {}, cats: d.cats || {}, batchIdx: d.batchIdx || 0 };
+    return { prog: d.prog || {}, cats: d.cats || {}, learnCat: d.learnCat || null, catBatchIdx: d.catBatchIdx || {} };
   } catch (e) { return {}; }
 }
 function persist() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ prog: state.prog, cats: state.cats, batchIdx: state.batchIdx })); } catch (e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ prog: state.prog, cats: state.cats, learnCat: state.learnCat, catBatchIdx: state.catBatchIdx })); } catch (e) {}
 }
 
 const saved = loadSaved();
@@ -35,7 +33,8 @@ const state = {
   screen: 'home',
   prog: saved.prog || {},
   cats: Object.assign({ antipasti: true, pasta: true, secondi: true, dolce: true }, saved.cats || {}),
-  batchIdx: (saved.batchIdx || 0) % TOTAL_BATCHES,
+  learnCat: (saved.learnCat && CATS.some(c => c.key === saved.learnCat)) ? saved.learnCat : CATS[0].key,
+  catBatchIdx: Object.assign({}, saved.catBatchIdx || {}),
   learnIdx: 0,
   t9Questions: null, t9Idx: 0, t9Score: 0, t9Results: [], t9Sel: null, t9MultiSel: {}, t9Checked: false, t9Drag: { placed: {} }, t9Done: false,
   _t9Batch: null,
@@ -83,10 +82,24 @@ function go(screen) {
   render();
 }
 
-// ---------- learn (infinite batch cycling) ----------
+// ---------- learn (infinite batch cycling, scoped to one category) ----------
+function catItemIds(catKey) { return ITEMS.filter(i => i.cat === catKey).map(i => i.id); }
+function catBatches(catKey) {
+  const ids = catItemIds(catKey);
+  if (!ids.length) return [[]];
+  const nBatches = Math.max(1, Math.ceil(ids.length / BATCH_SIZE));
+  const size = Math.ceil(ids.length / nBatches);
+  const batches = [];
+  for (let i = 0; i < ids.length; i += size) batches.push(ids.slice(i, i + size));
+  return batches;
+}
+function catBatchIdx(catKey) {
+  const total = catBatches(catKey).length;
+  return (state.catBatchIdx[catKey] || 0) % total;
+}
 function currentBatch() {
-  const start = state.batchIdx * BATCH_SIZE;
-  return ALL_IDS.slice(start, start + BATCH_SIZE);
+  const batches = catBatches(state.learnCat);
+  return batches[catBatchIdx(state.learnCat)] || [];
 }
 function ensureLearn() {
   if (state.learnIdx == null || state.learnIdx < 0 || state.learnIdx >= currentBatch().length) state.learnIdx = 0;
@@ -96,10 +109,20 @@ function learnNext() {
 }
 function learnPrev() { if (state.learnIdx > 0) { state.learnIdx--; render(); } }
 function advanceBatch() {
-  state.batchIdx = (state.batchIdx + 1) % TOTAL_BATCHES;
+  const total = catBatches(state.learnCat).length;
+  state.catBatchIdx[state.learnCat] = (catBatchIdx(state.learnCat) + 1) % total;
   state.learnIdx = 0;
   state.t9Done = false; state.t9Questions = null;
   persist();
+  go('learn');
+}
+function selectLearnCat(key) {
+  if (state.learnCat !== key) {
+    state.learnCat = key;
+    state.learnIdx = 0;
+    state.t9Done = false; state.t9Questions = null; state._t9Batch = null;
+    persist();
+  }
   go('learn');
 }
 
@@ -238,13 +261,14 @@ function renderHome() {
     const its = ITEMS.filter(i => i.cat === c.key);
     const m = its.filter(i => st(i.id).box >= 4).length;
     const pct = its.length ? Math.round(m / its.length * 100) : 0;
-    return `<div style="display:flex;flex-direction:column;gap:7px;">
+    const active = state.learnCat === c.key;
+    return `<button class="cat-pick ${active ? 'active' : ''}" data-action="selectLearnCat" data-id="${c.key}">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
-        <span class="serif" style="font-size:15px;color:#2A2521;">${esc(c.title)}</span>
+        <span class="serif" style="font-size:15px;color:#2A2521;">${esc(c.title)}<span style="font-size:11px;color:#B08A5A;font-weight:600;text-transform:none;margin-left:6px;">${esc(c.sub)}</span></span>
         <span style="font-size:12px;color:#9A9086;flex:none;">${m} / ${its.length}</span>
       </div>
       <div class="progressbar"><i style="width:${pct}%;"></i></div>
-    </div>`;
+    </button>`;
   }).join('');
 
   const togglesHtml = CATS.map(c => {
@@ -267,7 +291,7 @@ function renderHome() {
         </div>`).join('')}
     </div>` : `<div style="text-align:center;font-size:12.5px;line-height:1.5;color:#B0A69A;padding:2px 10px;">Twoje słabe miejsca pojawią się tutaj po pierwszych ćwiczeniach.</div>`;
 
-  const batchLabel = `Grupa ${state.batchIdx + 1} / ${TOTAL_BATCHES}`;
+  const batchLabel = `Grupa ${catBatchIdx(state.learnCat) + 1} / ${catBatches(state.learnCat).length} w kategorii „${catTitle(state.learnCat)}”`;
 
   return `<div style="display:flex;flex-direction:column;gap:15px;">
     <div class="card card-tight" style="display:flex;gap:11px;align-items:flex-start;">
@@ -292,22 +316,22 @@ function renderHome() {
       </div>
     </div>
 
-    <button class="btn btn-primary btn-block" data-action="go" data-id="learn">Poznaj kolejne 3 dania →</button>
-    <div style="text-align:center;font-size:12px;color:#B0A69A;">${batchLabel} · nauka cykliczna obejmuje całe menu</div>
-    <div class="btn-row">
-      <button class="btn btn-outline" data-action="go" data-id="test">Test (9 pytań)</button>
-      <button class="btn btn-outline" data-action="go" data-id="match">Dopasuj pary</button>
-    </div>
-
-    <div class="card" style="display:flex;flex-direction:column;gap:15px;">
-      <div class="kicker">Postęp wg kategorii</div>
+    <div class="card" style="display:flex;flex-direction:column;gap:6px;">
+      <div class="kicker" style="padding:0 10px;">Ucz się według kategorii</div>
       ${catsHtml}
     </div>
 
+    <button class="btn btn-primary btn-block" data-action="go" data-id="learn">Ucz się: ${esc(catTitle(state.learnCat))} →</button>
+    <div style="text-align:center;font-size:12px;color:#B0A69A;">${batchLabel}</div>
+    <div class="btn-row">
+      <button class="btn btn-outline" data-action="go" data-id="test">Test: ${esc(catTitle(state.learnCat))}</button>
+      <button class="btn btn-outline" data-action="go" data-id="match">Dopasuj pary</button>
+    </div>
+
     <div class="card" style="display:flex;flex-direction:column;gap:12px;">
-      <div class="kicker">Czego się uczyć (dla trybu Dopasuj)</div>
+      <div class="kicker">Kategorie w trybie Dopasuj</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;">${togglesHtml}</div>
-      <div style="font-size:12px;line-height:1.4;color:#9A9086;">Wybrane kategorie trafiają do trybu Dopasuj.</div>
+      <div style="font-size:12px;line-height:1.4;color:#9A9086;">Tryb Dopasuj miesza wybrane kategorie — ustaw go tutaj osobno.</div>
     </div>
 
     ${weakHtml}
@@ -323,20 +347,22 @@ function renderLearn() {
   const dots = batch.map((id, i) => `<span class="dot-step ${i === learnIdx ? 'active' : ''}"></span>`).join('');
   const isFirst = learnIdx === 0;
   const nextLabel = learnIdx === batch.length - 1 ? 'Rozpocznij test →' : 'Dalej →';
+  const catSwitchHtml = CATS.map(c => `<button class="pill-toggle ${c.key === state.learnCat ? 'on' : ''}" data-action="selectLearnCat" data-id="${c.key}">${esc(c.title)}</button>`).join('');
 
   const ingHtml = item.ingIds.map(iid => {
     const ing = ING[iid];
     return `<div class="ing-card">
       <img src="${ico(ing.icon)}" alt="${esc(ing.it)}" />
       <div class="ing-name">${esc(ing.it)}</div>
-      <div class="ing-tr">🇺🇦${esc(ing.uk)} · 🇵🇱${esc(ing.pl)} · 🇬🇧${esc(ing.en)}</div>
+      <div class="ing-tr">🇵🇱${esc(ing.pl)} · 🇬🇧${esc(ing.en)}</div>
     </div>`;
   }).join('');
 
   return `<div style="display:flex;flex-direction:column;gap:15px;">
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">${catSwitchHtml}</div>
     <div style="display:flex;justify-content:center;align-items:center;gap:6px;">${dots}</div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-      <span class="kicker">Danie ${learnIdx + 1} / ${batch.length} · Grupa ${state.batchIdx + 1}/${TOTAL_BATCHES}</span>
+      <span class="kicker">Danie ${learnIdx + 1} / ${batch.length} · Grupa ${catBatchIdx(state.learnCat) + 1}/${catBatches(state.learnCat).length}</span>
       <span style="font-size:12px;color:#9A9086;">${esc(catTitle(item.cat))}</span>
     </div>
 
@@ -345,7 +371,7 @@ function renderLearn() {
       <div class="serif" style="font-size:29px;font-weight:600;color:#2A2521;line-height:1.15;">${esc(item.name)}</div>
       <div class="serif" style="font-style:italic;font-size:15px;color:#A08A6E;">${esc(item.pron)}</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;font-size:11.5px;color:#9A9086;">
-        <span>🇺🇦 ${esc(item.tr.name.uk)}</span><span>🇵🇱 ${esc(item.tr.name.pl)}</span><span>🇬🇧 ${esc(item.tr.name.en)}</span>
+        <span>🇵🇱 ${esc(item.tr.name.pl)}</span><span>🇬🇧 ${esc(item.tr.name.en)}</span>
       </div>
       <div style="display:flex;gap:10px;align-items:center;margin-top:10px;">
         ${item.veg ? `<span class="veg-badge">${esc(vegLabel(item.veg))}</span>` : ''}
@@ -356,7 +382,6 @@ function renderLearn() {
     <div class="card" style="background:#F7F2E9;display:flex;flex-direction:column;gap:8px;">
       <div class="kicker-sm">Opis</div>
       <div style="font-size:15px;line-height:1.55;color:#3A342E;">${esc(item.desc)}</div>
-      <div style="font-size:12px;line-height:1.5;color:#9A9086;">🇺🇦 ${esc(item.tr.desc.uk)}</div>
       <div style="font-size:12px;line-height:1.5;color:#9A9086;">🇬🇧 ${esc(item.tr.desc.en)}</div>
     </div>
 
@@ -391,7 +416,7 @@ function renderTest() {
       else if (oid === q.correct) cls += ' correct';
       else if (oid === state.t9Sel) cls += ' wrong';
       else cls += ' dim';
-      return `<button class="${cls}" data-action="selectSingle" data-id="${oid}">${esc(ing.it)} · ${esc(ing.uk)}</button>`;
+      return `<button class="${cls}" data-action="selectSingle" data-id="${oid}">${esc(ing.it)} · ${esc(ing.pl)}</button>`;
     }).join('');
     body = `<div class="card"><div class="serif" style="font-size:19px;font-weight:600;color:#2A2521;line-height:1.35;">Który składnik NIE wchodzi w skład dania «${esc(dishLabel)}»?</div></div>
       <div style="display:flex;flex-direction:column;gap:10px;">${optionsHtml}</div>
@@ -404,7 +429,7 @@ function renderTest() {
       let cls = 'option multi';
       if (checked) { if (isCorrect) cls += ' correct'; else if (sel) cls += ' wrong'; else cls += ' dim'; }
       else if (sel) cls += ' sel';
-      return `<button class="${cls}" data-action="toggleMulti" data-id="${oid}"><span>${sel ? '☑' : '☐'}</span>${esc(ing.it)} · ${esc(ing.uk)}</button>`;
+      return `<button class="${cls}" data-action="toggleMulti" data-id="${oid}"><span>${sel ? '☑' : '☐'}</span>${esc(ing.it)} · ${esc(ing.pl)}</button>`;
     }).join('');
     const anySel = Object.keys(state.t9MultiSel).some(k => state.t9MultiSel[k]);
     body = `<div class="card"><div class="serif" style="font-size:19px;font-weight:600;color:#2A2521;line-height:1.35;">Zaznacz WSZYSTKIE składniki dania «${esc(dishLabel)}»</div></div>
@@ -412,16 +437,19 @@ function renderTest() {
       ${(!checked && anySel) ? '<button class="btn btn-dark btn-block" data-action="checkMulti">Sprawdź</button>' : ''}`;
   } else {
     const placed = state.t9Drag.placed;
+    const batchDishes = currentBatch().map(byId);
     const chipsHtml = q.chips.filter(c => !placed[c]).map(c => {
       const ing = ING[c];
-      return `<button class="drag-chip" data-drag-id="${c}"><img src="${ico(ing.icon)}" /><span>${esc(ing.it)}</span></button>`;
+      return `<button class="drag-chip" data-drag-id="${c}"><img src="${ico(ing.icon)}" /><span>${esc(ing.it)}</span><span class="chip-pl">${esc(ing.pl)}</span></button>`;
     }).join('');
     const zonesHtml = currentBatch().map(id => {
       const it = byId(id);
       const items = q.chips.filter(c => placed[c] && placed[c].zone === id);
       const itemsHtml = items.map(c => {
         const ing = ING[c];
-        return `<span class="placed-item"><img src="${ico(ing.icon)}" />${esc(ing.it)}</span>`;
+        const info = placed[c];
+        const correctDish = info.ok ? null : batchDishes.find(d => d.ingIds.indexOf(c) >= 0);
+        return `<span class="placed-item ${info.ok ? 'ok' : 'bad'}"><img src="${ico(ing.icon)}" /><span class="mark">${info.ok ? '✓' : '✗'}</span>${esc(ing.it)} · ${esc(ing.pl)}${correctDish ? `<span class="hint">→ ${esc(correctDish.name)}</span>` : ''}</span>`;
       }).join('');
       return `<div class="drop-zone" data-zone="${id}">
         <div class="serif" style="font-size:14px;font-weight:600;color:#2A2521;">${esc(it.name)}</div>
@@ -440,7 +468,7 @@ function renderTest() {
 
   return `<div style="display:flex;flex-direction:column;gap:15px;">
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span class="kicker">Pytanie ${state.t9Idx + 1} / ${total}</span>
+      <span class="kicker">Pytanie ${state.t9Idx + 1} / ${total} · ${esc(catTitle(state.learnCat))}</span>
       <span style="font-size:12px;color:#9A9086;">${typeLabel}</span>
     </div>
     <div class="progressbar"><i style="width:${progressPct}%;"></i></div>
@@ -459,7 +487,7 @@ function renderTestDone() {
       <div class="hole"><div class="serif" style="font-size:26px;font-weight:600;color:#2A2521;">${score}/${total}</div></div>
     </div>
     <div class="serif" style="font-size:19px;color:#2A2521;text-align:center;">${esc(headline)}</div>
-    <button class="btn btn-primary btn-block" data-action="advanceBatch">Poznaj kolejne 3 dania →</button>
+    <button class="btn btn-primary btn-block" data-action="advanceBatch">Kolejna grupa dań →</button>
     <div class="btn-row" style="width:100%;">
       <button class="btn btn-outline" data-action="retryTest">Powtórz test</button>
       <button class="btn btn-outline" data-action="go" data-id="learn">Wróć do nauki</button>
@@ -559,6 +587,7 @@ function render() {
 const ACTIONS = {
   go: (id) => go(id),
   toggleCat: (id) => toggleCat(id),
+  selectLearnCat: (id) => selectLearnCat(id),
   resetProgress: () => resetProgress(),
   learnNext: () => learnNext(),
   learnPrev: () => learnPrev(),

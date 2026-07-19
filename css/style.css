@@ -106,8 +106,8 @@ nav.app-nav {
 
 .ing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ing-card {
-  background: #FFFFFF; border: 1.5px solid #EAE2D5; border-radius: 14px; padding: 12px;
-  display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+  background: #FFFFFF; border: 1.5px solid #EAE2D5; border-radius: 14px; padding: 14px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
 }
 .ing-card img { width: 34px; height: 34px; }
 .ing-name { font-family: 'Spectral', serif; font-size: 14px; font-weight: 600; color: #2A2521; }
@@ -120,10 +120,11 @@ nav.app-nav {
 .drag-chip {
   appearance: none; cursor: grab; touch-action: none; background: #FFFFFF;
   border: 1.5px solid #EAE2D5; border-radius: 14px; padding: 10px 12px;
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
 }
 .drag-chip img { width: 28px; height: 28px; pointer-events: none; }
 .drag-chip span { font-family: 'Spectral', serif; font-size: 12.5px; color: #2A2521; pointer-events: none; }
+.drag-chip .chip-pl { font-family: inherit; font-size: 10px; color: #9A9086; pointer-events: none; }
 
 .drop-zone {
   border: 1.5px dashed #D9CDB8; border-radius: 14px; padding: 12px; min-height: 54px;
@@ -132,9 +133,13 @@ nav.app-nav {
 .drop-zone.hover { outline: 2.5px solid var(--accent); background: #F7EAD8; }
 .drop-zone .placed-item {
   display: flex; align-items: center; gap: 5px; background: #F7F2E9; border-radius: 10px;
-  padding: 5px 9px; font-size: 12px;
+  padding: 5px 9px; font-size: 12px; border: 1px solid transparent;
 }
 .drop-zone .placed-item img { width: 17px; height: 17px; }
+.drop-zone .placed-item.ok { background: #E4ECDD; border-color: #CBDCC0; color: #3B5A36; }
+.drop-zone .placed-item.bad { background: #F1DEDB; border-color: #E6C6C1; color: #8F3F39; }
+.drop-zone .placed-item .mark { font-weight: 700; }
+.drop-zone .placed-item .hint { font-size: 10.5px; opacity: .8; }
 
 .result-ring { position: relative; width: 120px; height: 120px; flex: none; }
 .result-ring .ring { width: 100%; height: 100%; border-radius: 50%; }
@@ -160,6 +165,14 @@ nav.app-nav {
   padding: 8px 14px; border-radius: 999px; border: 1.5px solid #E2D9CB; background: #FFFFFF; color: #8A8178;
 }
 .pill-toggle.on { background: var(--accent); color: #FFF7EC; border-color: var(--accent); }
+
+.cat-pick {
+  appearance: none; cursor: pointer; font-family: inherit; width: 100%; text-align: left;
+  background: none; border: 1.5px solid transparent; border-radius: 14px; padding: 10px;
+  display: flex; flex-direction: column; gap: 7px; transition: all .15s;
+}
+.cat-pick:hover { background: #F7F2E9; }
+.cat-pick.active { background: #F7EAD8; border-color: var(--accent); }
 
 .link-btn { appearance: none; background: none; border: none; cursor: pointer; color: #B0A69A; font-size: 12px; font-family: inherit; text-decoration: underline; }
 
