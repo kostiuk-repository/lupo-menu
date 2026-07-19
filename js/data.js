@@ -163,20 +163,23 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'salvia fritta',
     pron: 'salwia fritta',
-    desc: 'Duże liście szałwii smażone w chrupiącym cieście z oliwy, wody i mąki pszennej, posypane solą. Idealna przekąska komponująca się z piklowaną szalotką i oliwkami.',
+    desc: 'chrupiące liście szałwii (v)',
     price: '12',
     veg: 'v',
     allergens: ['gluten', 'jaja'],
-    serviceNotes: 'Chrupiąca przekąska na start. Ciasto bazuje na oliwie, wodzie i mące pszennej. Danie jest doprawiane solą.',
-    ingIds: ['salvia', 'farina', 'olio'],
+    serviceNotes: 'Chrupiąca przekąska na start. Szałwia smażona w ciastku na bazie oliwy, wody i mąki pszennej. Podawana z solą morską.',
+    ingIds: ['salvia'],
+    testDesc: [
+      'chrupiące liście ',
+      { ingId: 'salvia', text: 'szałwii' }
+    ],
     components: [
       { name: 'Główne składniki', ingIds: ['salvia', 'sale'] },
-      { name: 'Ciasto do smażenia', ingIds: ['farina', 'olio', 'acqua', 'uova'] },
-      { name: 'Rekomendowany dodatek', ingIds: ['cipolla', 'olive'] }
+      { name: 'Ciasto do smażenia', ingIds: ['farina', 'olio', 'acqua', 'uova'] }
     ],
     tr: {
       name: { pl: 'Smażona szałwia', en: 'Fried sage' },
-      desc: { en: 'Crispy fried sage leaves in light flour-olive oil batter, seasoned with sea salt.' }
+      desc: { en: 'Crispy fried sage leaves.' }
     }
   },
   {
@@ -184,19 +187,27 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'cipolline sottaceti',
     pron: 'czipolline sottaczeti',
-    desc: 'Szalotki słodko-kwaśne i lekko pikantne, marynowane w occie z czerwonego wina z ziarnami kolendry.',
+    desc: 'piklowane szalotki w occie z czerwonego wina i ziarnami kolendry (vg)',
     price: '12',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Wytrawne cebulki. Tworzą zgrany zestaw w połączeniu ze smażoną szałwią i zielonymi oliwkami.',
+    serviceNotes: 'Wytrawne, słodko-kwaśne cebulki szalotki marynowane w occie winnym i kolendrze.',
     ingIds: ['cipolla', 'aceto', 'coriandolo'],
+    testDesc: [
+      'piklowane ',
+      { ingId: 'cipolla', text: 'szalotki' },
+      ' w ',
+      { ingId: 'aceto', text: 'occie z czerwonego wina' },
+      ' i ziarnami ',
+      { ingId: 'coriandolo', text: 'kolendry' }
+    ],
     components: [
       { name: 'Baza dania', ingIds: ['cipolla'] },
-      { name: 'Marynata słodko-kwaśna', ingIds: ['aceto', 'coriandolo', 'zucchero', 'sale'] }
+      { name: 'Marynata', ingIds: ['aceto', 'coriandolo', 'zucchero', 'sale'] }
     ],
     tr: {
       name: { pl: 'Marynowane cebulki', en: 'Pickled baby onions' },
-      desc: { en: 'Sweet, sour and lightly spicy shallots pickled in red wine vinegar with coriander seeds.' }
+      desc: { en: 'Pickled shallots in red wine vinegar with coriander seeds.' }
     }
   },
   {
@@ -204,19 +215,27 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'olive verdi',
     pron: 'olive werdi',
-    desc: 'Oliwki Castelvetrano marynowane wg klasycznej receptury w oliwie z oliwek z liściem laurowym i skórką z pomarańczy.',
+    desc: 'marynowane oliwki "Castelvetrano" z liściem laurowym i skórką z pomarańczy (vg)',
     price: '12',
     veg: 'vg',
     allergens: [],
     serviceNotes: '⚠️ Pamiętaj poinformować gościa: oliwki podawane są z pestką!',
-    ingIds: ['olive', 'alloro', 'arancia', 'olio'],
+    ingIds: ['olive', 'alloro', 'arancia'],
+    testDesc: [
+      'marynowane ',
+      { ingId: 'olive', text: 'oliwki "Castelvetrano"' },
+      ' z ',
+      { ingId: 'alloro', text: 'liściem laurowym' },
+      ' i skórką z ',
+      { ingId: 'arancia', text: 'pomarańczy' }
+    ],
     components: [
       { name: 'Oliwki', ingIds: ['olive'] },
-      { name: 'Ziołowo-cytrusowa marynata', ingIds: ['olio', 'alloro', 'arancia'] }
+      { name: 'Marynata', ingIds: ['olio', 'alloro', 'arancia'] }
     ],
     tr: {
       name: { pl: 'Zielone oliwki', en: 'Green olives' },
-      desc: { en: 'Castelvetrano olives marinated in olive oil with bay leaf and orange zest. Contains pits!' }
+      desc: { en: 'Marinated Castelvetrano olives with bay leaf and orange zest.' }
     }
   },
   {
@@ -224,20 +243,26 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'antipasti misti',
     pron: 'antipasti misti',
-    desc: 'Zestaw przekąsek na start: piklowane szalotki, marynowane oliwki oraz duże liście szałwii smażone w cieście z oliwy, mąki i jajka.',
+    desc: 'zestaw: piklowane szalotki, oliwki, liście szałwii (vg)',
     price: '33',
     veg: 'vg',
     allergens: ['gluten', 'jaja'],
-    serviceNotes: 'Idealne danie do dzielenia się (to share) na początek posiłku.',
-    ingIds: ['cipolla', 'olive', 'salvia', 'farina'],
+    serviceNotes: 'Idealny zestaw przekąsek do dzielenia się na początek posiłku.',
+    ingIds: ['cipolla', 'olive', 'salvia'],
+    testDesc: [
+      'zestaw: piklowane ',
+      { ingId: 'cipolla', text: 'szalotki' },
+      ', ',
+      { ingId: 'olive', text: 'oliwki' },
+      ', liście ',
+      { ingId: 'salvia', text: 'szałwii' }
+    ],
     components: [
-      { name: 'Smażona szałwia (Salvia fritta)', ingIds: ['salvia', 'farina', 'olio', 'uova', 'sale'] },
-      { name: 'Cebulki marynowane (Cipolline)', ingIds: ['cipolla', 'aceto', 'coriandolo'] },
-      { name: 'Zielone oliwki (Olive verdi)', ingIds: ['olive', 'alloro', 'arancia', 'olio'] }
+      { name: 'Składniki zestawu', ingIds: ['cipolla', 'olive', 'salvia', 'aceto', 'alloro', 'arancia', 'farina'] }
     ],
     tr: {
       name: { pl: 'Zestaw przystawek', en: 'Mixed antipasti' },
-      desc: { en: 'Platter of pickled shallots, olives, and crispy sage leaves in light batter.' }
+      desc: { en: 'Set of pickled shallots, olives, fried sage leaves.' }
     }
   },
   {
@@ -245,19 +270,24 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'focaccia',
     pron: 'fokacza',
-    desc: 'Domowa autorska focaccia na bazie mąki pszennej, drożdży, oliwy z oliwek i soli. Ciasto rośnie około 18 godzin.',
+    desc: 'domowa focaccia z oliwą z oliwek (vg)',
     price: '12',
     veg: 'vg',
     allergens: ['gluten'],
-    serviceNotes: 'Oliwę nalewamy przy gościu z konewki na spodeczek. Podajemy też sól i pieprz. Gratis do dań: 2 os. = 3 kromki, 3+ os. = po 1 kromce/os.',
-    ingIds: ['farina', 'olio', 'lievito'],
+    serviceNotes: 'Oliwę nalewamy przy gościu z konewki na spodeczek (+ sól i pieprz). Gratis do dań: 2 os. = 3 kromki, 3+ os. = po 1 kromce/os.',
+    ingIds: ['pane', 'olio'],
+    testDesc: [
+      'domowa ',
+      { ingId: 'pane', text: 'focaccia' },
+      ' z ',
+      { ingId: 'olio', text: 'oliwą z oliwek' }
+    ],
     components: [
-      { name: 'Ciasto focaccia (wyrasta 18h)', ingIds: ['farina', 'lievito', 'olio', 'sale', 'acqua'] },
-      { name: 'Rytuał podania przy stole', ingIds: ['olio', 'sale', 'pepe'] }
+      { name: 'Ciasto i podanie', ingIds: ['farina', 'lievito', 'olio', 'sale'] }
     ],
     tr: {
       name: { pl: 'Autorska focaccia', en: 'House focaccia' },
-      desc: { en: 'Signature house recipe dough fermented for 18 hours. Served with olive oil poured at table from a watering can.' }
+      desc: { en: 'Homemade focaccia with olive oil.' }
     }
   },
   {
@@ -265,19 +295,24 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'insalata verde',
     pron: 'insalata werde',
-    desc: 'Mieszanka sezonowych sałat z dressingiem cytrynowym. W sezonie wiosenno-letnim z gospodarstwa Ludwik Majlert, w jesienno-zimowym spod Hali Mirowskiej.',
+    desc: 'mieszanka sezonowych sałat i ziół (vg)',
     price: '18',
     veg: 'vg',
     allergens: ['gorczyca'],
-    serviceNotes: 'Lokalna mieszanka sałat od zaufanych dostawców. Dressing cytrynowy zawiera gorczycę.',
-    ingIds: ['insalata', 'erbe', 'limone'],
+    serviceNotes: 'Lokalna mieszanka sałat z dressingiem cytrynowym.',
+    ingIds: ['insalata', 'erbe'],
+    testDesc: [
+      'mieszanka sezonowych ',
+      { ingId: 'insalata', text: 'sałat' },
+      ' i ',
+      { ingId: 'erbe', text: 'ziół' }
+    ],
     components: [
-      { name: 'Baza sałat', ingIds: ['insalata', 'erbe'] },
-      { name: 'Dressing cytrynowy', ingIds: ['limone', 'olio', 'gorczyca', 'sale'] }
+      { name: 'Baza sałat', ingIds: ['insalata', 'erbe', 'limone'] }
     ],
     tr: {
       name: { pl: 'Zielona sałatka', en: 'Green salad' },
-      desc: { en: 'Seasonal salad greens with lemon dressing, sourced locally from farm Majlert or Hala Mirowska.' }
+      desc: { en: 'Mix of seasonal salad greens and herbs.' }
     }
   },
   {
@@ -285,15 +320,22 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'caprese diversa',
     pron: 'kapreze diwersa',
-    desc: 'Kremowy ser stracciatella z karmelizowanymi pomidorami i aromatyczną oliwą bazyliową.',
+    desc: 'kremowy ser stracciatella z karmelizowanymi pomidorami i oliwą bazyliową (v)',
     price: '42',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Unikalne ujęcie klasycznej caprese. Kremowa stracciatella przełamana karmelizowaną słodyczą pomidorów i oliwą bazyliową.',
+    serviceNotes: 'Kremowa stracciatella ze słodkimi pomidorami i oliwą bazyliową.',
     ingIds: ['stracciatella', 'pomodoro', 'basilico', 'olio'],
+    testDesc: [
+      'kremowy ser ',
+      { ingId: 'stracciatella', text: 'stracciatella' },
+      ' z karmelizowanymi ',
+      { ingId: 'pomodoro', text: 'pomidorami' },
+      ' i oliwą ',
+      { ingId: 'basilico', text: 'bazyliową' }
+    ],
     components: [
-      { name: 'Baza serowa', ingIds: ['stracciatella'] },
-      { name: 'Pomidory & Oliwa bazyliowa', ingIds: ['pomodoro', 'basilico', 'olio', 'zucchero', 'sale'] }
+      { name: 'Elementy', ingIds: ['stracciatella', 'pomodoro', 'basilico', 'olio'] }
     ],
     tr: {
       name: { pl: 'Caprese diversa', en: 'Caprese diversa' },
@@ -305,15 +347,24 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'fagiolini con pesche',
     pron: 'fadżiolini kon peske',
-    desc: 'Żółta fasolka szparagowa ze świeżymi brzoskwiniami, chrupiącymi migdałami i świeżą werbeną.',
+    desc: 'żółta fasolka szparagowa ze świeżymi brzoskwiniami, migdałami i werbeną (vg)',
     price: '32',
     veg: 'vg',
     allergens: ['orzechy'],
-    serviceNotes: 'Lekka, wyrazista przystawka. Połączenie chrupkości fasolki ze słodyczą brzoskwiń, migdałami i ziołową nutą werbeny.',
+    serviceNotes: 'Lekka, wyrazista przystawka łącząca fasolkę, brzoskwinie, migdały i werbenę.',
     ingIds: ['fagiolini', 'pesca', 'mandorla', 'verbena'],
+    testDesc: [
+      'żółta ',
+      { ingId: 'fagiolini', text: 'fasolka szparagowa' },
+      ' ze świeżymi ',
+      { ingId: 'pesca', text: 'brzoskwiniami' },
+      ', ',
+      { ingId: 'mandorla', text: 'migdałami' },
+      ' i ',
+      { ingId: 'verbena', text: 'werbeną' }
+    ],
     components: [
-      { name: 'Baza warzywno-owocowa', ingIds: ['fagiolini', 'pesca'] },
-      { name: 'Posypka & Zioła', ingIds: ['mandorla', 'verbena', 'olio', 'sale'] }
+      { name: 'Składniki', ingIds: ['fagiolini', 'pesca', 'mandorla', 'verbena'] }
     ],
     tr: {
       name: { pl: 'Fasolka szparagowa z brzoskwiniami', en: 'Green beans with peaches' },
@@ -325,20 +376,30 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'crudo di orata con crema di finocchio',
     pron: 'krudo di orata kon krema di finokkio',
-    desc: 'Surowa, cienko krojona dorada chorwacka podana z purée z kopru włoskiego, agrestem, dressingiem z agrestu i trybuli, kaparami z czosnku niedźwiedziego i chlebem pane carasau.',
+    desc: 'crudo z dorady z kremem z kopru włoskiego, agrestem, kaparami z czosnku niedźwiedziego i chrupiącym chlebem sardyńskim',
     price: '48',
     veg: null,
     allergens: ['ryby', 'gluten'],
-    serviceNotes: 'W porcji znajduje się dokładnie 40g dorady. Bardzo świeże, lekkie i eleganckie danie z chrupiącym chlebem sardyńskim.',
-    ingIds: ['orata', 'finocchio', 'uvaspina', 'pane', 'capperi'],
+    serviceNotes: 'Świeża surowa dorada (40g) podana z kremem z fenkułu, agrestem i chlebem pane carasau.',
+    ingIds: ['orata', 'finocchio', 'uvaspina', 'czosnekniedzwiedzi', 'pane'],
+    testDesc: [
+      'crudo z ',
+      { ingId: 'orata', text: 'dorady' },
+      ' z kremem z ',
+      { ingId: 'finocchio', text: 'kopru włoskiego' },
+      ', ',
+      { ingId: 'uvaspina', text: 'agrestem' },
+      ', kaparami z ',
+      { ingId: 'czosnekniedzwiedzi', text: 'czosnku niedźwiedziego' },
+      ' i chrupiącym ',
+      { ingId: 'pane', text: 'chlebem sardyńskim' }
+    ],
     components: [
-      { name: 'Surowa ryba (40g porcja)', ingIds: ['orata', 'sale'] },
-      { name: 'Purée & Dressing agrestowy', ingIds: ['finocchio', 'uvaspina', 'erbe', 'olio'] },
-      { name: 'Dodatki & Chleb sardyński', ingIds: ['capperi', 'czosnekniedzwiedzi', 'pane'] }
+      { name: 'Składniki dania', ingIds: ['orata', 'finocchio', 'uvaspina', 'czosnekniedzwiedzi', 'pane'] }
     ],
     tr: {
       name: { pl: 'Crudo z dorady', en: 'Sea bream crudo' },
-      desc: { en: 'Fresh Croatian sea bream crudo (40g) with fennel purée, gooseberries, wild garlic capers and Sardinian bread.' }
+      desc: { en: 'Sea bream crudo with fennel cream, gooseberries, wild garlic capers and Sardinian bread.' }
     }
   },
   {
@@ -346,19 +407,32 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'fiori di zucca con pappa al pomodoro',
     pron: 'fiori di dzukka kon pappa al pomodoro',
-    desc: 'Smażone kwiaty cukinii nadziewane serem kozim i bobem z tymiankiem, chili oraz chłodnikiem ze świeżych pomidorów.',
+    desc: 'smażone kwiaty cukinii z serem kozim i bobem, tymiankiem, chili i chłodnikiem ze świeżych pomidorów (v)',
     price: '48',
     veg: 'v',
     allergens: ['mleko', 'gluten'],
-    serviceNotes: 'Chrupiące kwiaty cukinii z wytrawnym nadzieniem z sera koziego i bobu na orzeźwiającym chłodniku pomidorowym.',
+    serviceNotes: 'Chrupiące kwiaty cukinii nadziewane serem kozim i bobem na chłodniku pomidorowym.',
     ingIds: ['fioridizucca', 'formaggiocapra', 'fave', 'tymianek', 'peperoncino', 'pomodoro'],
+    testDesc: [
+      'smażone ',
+      { ingId: 'fioridizucca', text: 'kwiaty cukinii' },
+      ' z ',
+      { ingId: 'formaggiocapra', text: 'serem kozim' },
+      ' i ',
+      { ingId: 'fave', text: 'bobem' },
+      ', ',
+      { ingId: 'tymianek', text: 'tymiankiem' },
+      ', ',
+      { ingId: 'peperoncino', text: 'chili' },
+      ' i chłodnikiem ze świeżych ',
+      { ingId: 'pomodoro', text: 'pomidorów' }
+    ],
     components: [
-      { name: 'Nadziewane kwiaty cukinii', ingIds: ['fioridizucca', 'formaggiocapra', 'fave', 'tymianek'] },
-      { name: 'Chłodnik pomidorowy & Chili', ingIds: ['pomodoro', 'peperoncino', 'olio', 'sale'] }
+      { name: 'Nadzienie i sos', ingIds: ['fioridizucca', 'formaggiocapra', 'fave', 'tymianek', 'peperoncino', 'pomodoro'] }
     ],
     tr: {
       name: { pl: 'Kwiaty cukinii z pappa al pomodoro', en: 'Zucchini flowers with tomato soup' },
-      desc: { en: 'Fried zucchini flowers stuffed with goat cheese and fava beans, thyme, chili and chilled fresh tomato soup.' }
+      desc: { en: 'Fried zucchini flowers with goat cheese, fava beans, thyme, chili and chilled fresh tomato soup.' }
     }
   },
   {
@@ -366,20 +440,28 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'tartare al parmigiano',
     pron: 'tartare al parmidżano',
-    desc: 'Tatar z wołowiny (górna zrazowa) z pianką z parmezanu, mleka i śmietanki, olejem rzepakowym, szalotką, sos Worcestershire, surowym żółtkiem przepiórczym i opieńkami pod pianką.',
+    desc: 'tatar wołowy z żółtkiem przepiórczym, pianką parmezanową i marynowanymi opieńkami',
     price: '52',
     veg: null,
     allergens: ['mleko', 'jaja'],
-    serviceNotes: 'Do tatara zawsze podajemy gościowi sól oraz młotkowany pieprz.',
-    ingIds: ['manzo', 'tuorlo', 'parmigiano', 'funghi', 'cipolla'],
+    serviceNotes: 'Tatar wołowy pod zwieńczeniem aksamitnej pianki parmezanowej. Zawsze serwujemy z solą i młotkowanym pieprzem.',
+    ingIds: ['manzo', 'tuorlo', 'parmigiano', 'funghi'],
+    testDesc: [
+      'tatar ',
+      { ingId: 'manzo', text: 'wołowy' },
+      ' z ',
+      { ingId: 'tuorlo', text: 'żółtkiem przepiórczym' },
+      ', pianką ',
+      { ingId: 'parmigiano', text: 'parmezanową' },
+      ' i marynowanymi ',
+      { ingId: 'funghi', text: 'opieńkami' }
+    ],
     components: [
-      { name: 'Tatar z wołowiny zrazowej', ingIds: ['manzo', 'tuorlo', 'cipolla', 'worcestershire', 'olio', 'sale', 'pepe'] },
-      { name: 'Aksamitna pianka parmezanowa', ingIds: ['parmigiano', 'panna'] },
-      { name: 'Grzyby pod pianką', ingIds: ['funghi', 'aceto'] }
+      { name: 'Główne elementy', ingIds: ['manzo', 'tuorlo', 'parmigiano', 'funghi', 'cipolla', 'worcestershire'] }
     ],
     tr: {
       name: { pl: 'Tatar wołowy z parmezanem', en: 'Beef tartare with parmesan foam' },
-      desc: { en: 'Beef tenderloin tartare topped with parmesan foam, quail egg yolk, shallots and marinated mushrooms.' }
+      desc: { en: 'Beef tartare with quail egg yolk, parmesan foam and marinated mushrooms.' }
     }
   },
   {
@@ -387,18 +469,23 @@ export const ITEMS = [
     cat: 'antipasti',
     name: 'zuppa del giorno',
     pron: 'dzuppa del dżorno',
-    desc: 'Codziennie inna autorska propozycja zupy przygotowywana ze świeżych, sezonowych składników przez szefa kuchni lub sous-chefów.',
+    desc: 'zupa dnia',
     price: '18',
     veg: 'v',
     allergens: ['zależy od dnia'],
-    serviceNotes: 'Przed zaoferowaniem gościom dopytaj w kuchni o aktualną zupę i obecne w niej alergeny.',
+    serviceNotes: 'Codziennie inna autorska zupa. Przed zaoferowaniem dopytaj w kuchni o skład i alergeny.',
     ingIds: ['verdure', 'erbe'],
+    testDesc: [
+      { ingId: 'verdure', text: 'zupa' },
+      ' ',
+      { ingId: 'erbe', text: 'dnia' }
+    ],
     components: [
-      { name: 'Baza zupy dnia', ingIds: ['verdure', 'erbe', 'sale'] }
+      { name: 'Baza zupy', ingIds: ['verdure', 'erbe'] }
     ],
     tr: {
       name: { pl: 'Zupa dnia', en: 'Soup of the day' },
-      desc: { en: 'Daily special soup crafted from fresh seasonal ingredients.' }
+      desc: { en: 'Soup of the day.' }
     }
   },
 
@@ -408,20 +495,27 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'occhi di lupo alla vodka',
     pron: 'okki di lupo alla wodka',
-    desc: 'Klasyk lat 80. Duże, gładkie tuby z południa Włoch w sosie śmietanowo-pomidorowym z wódką. Wódka całkowicie odparowuje podczas gotowania, nadając aksamitność.',
+    desc: 'klasyk lat 80-tych, sos śmietanowo - pomidorowy z dodatkiem wódki (v)',
     price: '32',
     veg: 'v',
     pastaType: 'jajeczny',
     allergens: ['gluten', 'mleko', 'cebula', 'czosnek'],
     serviceNotes: 'Wódka całkowicie odparowuje w trakcie gotowania — danie nie zawiera alkoholu.',
-    ingIds: ['pastafresca', 'pomodoro', 'panna', 'vodka'],
+    ingIds: ['panna', 'pomodoro', 'vodka'],
+    testDesc: [
+      'klasyk lat 80-tych, sos ',
+      { ingId: 'panna', text: 'śmietanowo' },
+      ' - ',
+      { ingId: 'pomodoro', text: 'pomidorowy' },
+      ' z dodatkiem ',
+      { ingId: 'vodka', text: 'wódki' }
+    ],
     components: [
-      { name: 'Makaron Occhi di lupo', ingIds: ['pastafresca', 'farina', 'uova'] },
-      { name: 'Sos śmietanowo-pomidorowy z wódką', ingIds: ['pomodoro', 'panna', 'vodka', 'czosnek', 'cipolla', 'parmigiano', 'sale'] }
+      { name: 'Składniki sosu', ingIds: ['pastafresca', 'pomodoro', 'panna', 'vodka', 'czosnek', 'cipolla'] }
     ],
     tr: {
       name: { pl: 'Occhi di lupo w sosie z wódką', en: 'Occhi di lupo alla vodka' },
-      desc: { en: 'Large tube pasta in an 80s classic silky tomato-cream sauce finished with evaporated vodka.' }
+      desc: { en: '80s classic, tomato-cream sauce with vodka.' }
     }
   },
   {
@@ -429,21 +523,27 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'rosette al ragù',
     pron: 'rozette al ragu',
-    desc: 'Zawijana forma lasagni z Modeny. Farsz z długo duszonych policzków wołowych po bolońsku z soffritto (seler, marchew, cebula), pomidorami i ziołami.',
+    desc: 'rodzaj lasagne z Modeny z długo gotowanymi policzkami wołowymi po bolońsku z ziołami',
     price: '48',
     veg: null,
     pastaType: 'jajeczny',
     allergens: ['gluten', 'jaja', 'mleko', 'seler', 'cebula'],
-    serviceNotes: 'Ragù alla bolognese występuje tu jako esencjonalny farsz z rolowanego makaronu, a nie płynny sos.',
-    ingIds: ['pastafresca', 'guanciadimanzo', 'pomodoro', 'wino', 'mozzarella', 'erbe'],
+    serviceNotes: 'Rolowana zapiekana lasagne z farszem z policzków wołowych po bolońsku.',
+    ingIds: ['pastafresca', 'guanciadimanzo', 'erbe'],
+    testDesc: [
+      'rodzaj ',
+      { ingId: 'pastafresca', text: 'lasagne z Modeny' },
+      ' z długo gotowanymi ',
+      { ingId: 'guanciadimanzo', text: 'policzkami wołowymi' },
+      ' po bolońsku z ',
+      { ingId: 'erbe', text: 'ziołami' }
+    ],
     components: [
-      { name: 'Rolowane ciasto lasagne', ingIds: ['pastafresca', 'farina', 'uova'] },
-      { name: 'Farsz Ragù z policzków', ingIds: ['guanciadimanzo', 'seler', 'marchew', 'cipolla', 'pomodoro', 'wino', 'sale'] },
-      { name: 'Zapieczenie & Zioła', ingIds: ['mozzarella', 'basilico', 'erbe'] }
+      { name: 'Farsz i makaron', ingIds: ['pastafresca', 'guanciadimanzo', 'pomodoro', 'seler', 'marchew', 'cipolla', 'erbe'] }
     ],
     tr: {
       name: { pl: 'Rosette z ragù z policzków', en: 'Rosette with beef cheek ragù' },
-      desc: { en: 'Rolled and baked Modena-style lasagna stuffed with slow-braised beef cheek ragù and mozzarella.' }
+      desc: { en: 'Type of Modena lasagna with long-cooked beef cheeks Bolognese style with herbs.' }
     }
   },
   {
@@ -451,16 +551,27 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'gnocchi allo zafferano e zucchine novelle',
     pron: 'niokki allo dzafferano e dzukkine nowelle',
-    desc: 'Gnocchi ze słodkich ziemniaków z szafranem w aromatycznym sosie z żółtych pomidorów, z młodymi cukiniami i ziołami.',
+    desc: 'gnocchi ze słodkich ziemniaków z szafranem w sosie z żółtych pomidorów, z młodymi cukiniami i ziołami',
     price: '46',
     veg: 'v',
     pastaType: 'bezjajeczny',
     allergens: ['gluten', 'mleko'],
-    serviceNotes: 'Lekka, aromatyczna kompozycja ze słodkich ziemniaków i szafranu w złocistym sosie z żółtych pomidorów.',
-    ingIds: ['gnocchi', 'zafferano', 'pomodorogiallo', 'zucchine', 'erbe'],
+    serviceNotes: 'Gnocchi ze słodkich ziemniaków z szafranem i sosem z żółtych pomidorów.',
+    ingIds: ['patate', 'zafferano', 'pomodorogiallo', 'zucchine', 'erbe'],
+    testDesc: [
+      'gnocchi ze ',
+      { ingId: 'patate', text: 'słodkich ziemniaków' },
+      ' z ',
+      { ingId: 'zafferano', text: 'szafranem' },
+      ' w sosie z ',
+      { ingId: 'pomodorogiallo', text: 'żółtych pomidorów' },
+      ', z młodymi ',
+      { ingId: 'zucchine', text: 'cukiniami' },
+      ' i ',
+      { ingId: 'erbe', text: 'ziołami' }
+    ],
     components: [
-      { name: 'Gnocchi ze słodkich ziemniaków', ingIds: ['gnocchi', 'patate'] },
-      { name: 'Sos szafranowo-pomidorowy & Cukinia', ingIds: ['zafferano', 'pomodorogiallo', 'zucchine', 'erbe', 'burro', 'sale'] }
+      { name: 'Główne elementy', ingIds: ['gnocchi', 'patate', 'zafferano', 'pomodorogiallo', 'zucchine', 'erbe'] }
     ],
     tr: {
       name: { pl: 'Gnocchi z szafranem i cukinią', en: 'Saffron sweet potato gnocchi' },
@@ -472,21 +583,31 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'fazzoletti con gallinacci',
     pron: 'faccoletti kon gallinaczczi',
-    desc: 'Płat świeżego makaronu z kurkami, płynnym żółtkiem confit, majerankiem i pesto z rukwi wodnej.',
+    desc: 'płat świeżego makaronu z kurkami, płynnym żółtkiem confit, majerankiem i z pesto z rukwi wodnej (v)',
     price: '60',
     veg: 'v',
     pastaType: 'jajeczny',
     allergens: ['gluten', 'jaja', 'mleko'],
-    serviceNotes: 'Szeroki płat świeżego makaronu skrywający leśne kurki, majeranek i chłodne pesto z rukwi wodnej pod płynnym żółtkiem.',
+    serviceNotes: 'Szeroki płat świeżego makaronu z leśnymi kurkami i konfitowanym żółtkiem.',
     ingIds: ['pastafresca', 'gallinacci', 'tuorlo', 'majeranek', 'crescione'],
+    testDesc: [
+      'płat ',
+      { ingId: 'pastafresca', text: 'świeżego makaronu' },
+      ' z ',
+      { ingId: 'gallinacci', text: 'kurkami' },
+      ', płynnym ',
+      { ingId: 'tuorlo', text: 'żółtkiem confit' },
+      ', ',
+      { ingId: 'majeranek', text: 'majerankiem' },
+      ' i z pesto z ',
+      { ingId: 'crescione', text: 'rukwi wodnej' }
+    ],
     components: [
-      { name: 'Płat makaronu Fazzoletti', ingIds: ['pastafresca', 'farina', 'uova'] },
-      { name: 'Kurki & Pesto z rukwi', ingIds: ['gallinacci', 'crescione', 'majeranek', 'burro', 'sale'] },
-      { name: 'Konfitowane żółtko', ingIds: ['tuorlo'] }
+      { name: 'Makaron i kurki', ingIds: ['pastafresca', 'gallinacci', 'tuorlo', 'majeranek', 'crescione', 'burro'] }
     ],
     tr: {
       name: { pl: 'Fazzoletti z kurkami i żółtkiem', en: 'Fazzoletti with chanterelles' },
-      desc: { en: 'Fresh pasta sheet with chanterelles, confit egg yolk, marjoram and watercress pesto.' }
+      desc: { en: 'Sheet of fresh pasta with chanterelles, liquid confit egg yolk, marjoram and watercress pesto.' }
     }
   },
   {
@@ -494,21 +615,29 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'casarecce con salsiccia',
     pron: 'kazarecze kon salsiczcza',
-    desc: 'Krótki skręcony makaron z Sycylii z włoską kiełbasą salsiccia fresca, pieczonym fenkułem i świeżą skórką z pomarańczy.',
+    desc: 'krótki makaron z Sycylii, z włoską kiełbasą salsiccia fresca, pieczonym fenkułem i skórką z pomarańczy',
     price: '46',
     veg: null,
     pastaType: 'jajeczny',
     allergens: ['gluten', 'mleko', 'czosnek', 'cebula'],
-    serviceNotes: 'Świeży cytrusowy akcent pomarańczy doskonale przełamuje i balansuje tłustość włoskiej kiełbasy.',
-    ingIds: ['pastafresca', 'salsiccia', 'finocchio', 'arancia', 'wino'],
+    serviceNotes: 'Makaron Casarecce z włoską kiełbasą salsiccia i świeżą cytrusową skórką z pomarańczy.',
+    ingIds: ['pastafresca', 'salsiccia', 'finocchio', 'arancia'],
+    testDesc: [
+      'krótki ',
+      { ingId: 'pastafresca', text: 'makaron' },
+      ' z Sycylii, z włoską kiełbasą ',
+      { ingId: 'salsiccia', text: 'salsiccia fresca' },
+      ', pieczonym ',
+      { ingId: 'finocchio', text: 'fenkułem' },
+      ' i skórką z ',
+      { ingId: 'arancia', text: 'pomarańczy' }
+    ],
     components: [
-      { name: 'Makaron Casarecce', ingIds: ['pastafresca', 'farina', 'uova'] },
-      { name: 'Sos mięsno-fenkułowy', ingIds: ['salsiccia', 'finocchio', 'cipolla', 'czosnek', 'wino', 'sale'] },
-      { name: 'Nuta cytrusowa', ingIds: ['arancia'] }
+      { name: 'Składniki dania', ingIds: ['pastafresca', 'salsiccia', 'finocchio', 'arancia'] }
     ],
     tr: {
       name: { pl: 'Casarecce z kiełbasą salsiccia', en: 'Casarecce with salsiccia sausage' },
-      desc: { en: 'Twisted pasta with fresh Italian sausage, fennel purée, white wine, and orange zest.' }
+      desc: { en: 'Short Sicilian pasta with fresh Italian salsiccia sausage, roasted fennel and orange zest.' }
     }
   },
   {
@@ -516,21 +645,31 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'fiori',
     pron: 'fiori',
-    desc: 'Ręcznie wałkowany makaron nadziewany ricottą, parmezanem, mascarpone, szpinakiem i oregano, podany z palonym masłem.',
+    desc: 'makaron nadziewany ricottą, parmezanem, mascarpone, szpinakiem i oregano, z palonym masłem (v)',
     price: '44',
     veg: 'v',
     pastaType: 'jajeczny',
     allergens: ['gluten', 'mleko', 'jaja'],
-    serviceNotes: 'Nazwa pochodzi od włoskiego słowa „fiori” (kwiaty). Subtelne i aromatyczne danie wegetariańskie.',
-    ingIds: ['pastafresca', 'ricotta', 'mascarpone', 'parmigiano', 'spinaci', 'burro'],
+    serviceNotes: 'Ręcznie lepine kwiaty ravioli z 3 serami i szpinakiem podane z palonym masłem.',
+    ingIds: ['pastafresca', 'ricotta', 'parmigiano', 'mascarpone', 'spinaci', 'burro'],
+    testDesc: [
+      'makaron nadziewany ',
+      { ingId: 'ricotta', text: 'ricottą' },
+      ', ',
+      { ingId: 'parmigiano', text: 'parmezanem' },
+      ', ',
+      { ingId: 'mascarpone', text: 'mascarpone' },
+      ', ',
+      { ingId: 'spinaci', text: 'szpinakiem' },
+      ' i oregano, z palonym ',
+      { ingId: 'burro', text: 'masłem' }
+    ],
     components: [
-      { name: 'Ciasto ravioli (kwiatki)', ingIds: ['pastafresca', 'farina', 'uova'] },
-      { name: 'Farsz z serów i szpinaku', ingIds: ['ricotta', 'mascarpone', 'parmigiano', 'spinaci', 'erbe', 'sale'] },
-      { name: 'Okrasa z palonego masła', ingIds: ['burro'] }
+      { name: 'Farsz i okrasa', ingIds: ['pastafresca', 'ricotta', 'parmigiano', 'mascarpone', 'spinaci', 'burro'] }
     ],
     tr: {
       name: { pl: 'Fiori z ricottą i szpinakiem', en: 'Fiori (flower ravioli)' },
-      desc: { en: 'Hand-rolled flower-shaped ravioli filled with ricotta, mascarpone, spinach and oregano in brown butter.' }
+      desc: { en: 'Pasta filled with ricotta, parmesan, mascarpone, spinach and oregano, with brown butter.' }
     }
   },
   {
@@ -538,21 +677,31 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'lasagnette alfredo',
     pron: 'lazaniette alfredo',
-    desc: 'Pasy makaronu z krewetkami, cytryną confit, masłem i parmezanem.',
+    desc: 'pasy makaronu z krewetkami, cytryną confit, masłem i parmezanem',
     price: '58',
     veg: null,
     pastaType: 'jajeczny',
     allergens: ['skorupiaki', 'mleko', 'jaja', 'gluten', 'czosnek'],
-    serviceNotes: 'Wykwintna wersja sosu Alfredo — cytryna confit dodaje lekkości i przełamuje maślano-serowy smak.',
+    serviceNotes: 'Szerokie pasy makaronu z krewetkami w aksamitnym maślano-parmezanowym sosie z cytryną confit.',
     ingIds: ['pastafresca', 'gamberi', 'limone', 'burro', 'parmigiano'],
+    testDesc: [
+      'pasy ',
+      { ingId: 'pastafresca', text: 'makaronu' },
+      ' z ',
+      { ingId: 'gamberi', text: 'krewetkami' },
+      ', ',
+      { ingId: 'limone', text: 'cytryną confit' },
+      ', ',
+      { ingId: 'burro', text: 'masłem' },
+      ' i ',
+      { ingId: 'parmigiano', text: 'parmezanem' }
+    ],
     components: [
-      { name: 'Pasy makaronu Lasagnette', ingIds: ['pastafresca', 'farina', 'uova'] },
-      { name: 'Sos Alfredo z krewetkami', ingIds: ['gamberi', 'burro', 'parmigiano', 'czosnek', 'wino', 'sale'] },
-      { name: 'Wykończenie cytrynowe', ingIds: ['limone', 'erbe'] }
+      { name: 'Składniki dania', ingIds: ['pastafresca', 'gamberi', 'limone', 'burro', 'parmigiano'] }
     ],
     tr: {
       name: { pl: 'Lasagnette alfredo z krewetkami', en: 'Lasagnette Alfredo with shrimp' },
-      desc: { en: 'Extruded pasta ribbons with shrimp, confit lemon, butter, garlic and parmesan sauce.' }
+      desc: { en: 'Pasta ribbons with shrimp, confit lemon, butter and parmesan.' }
     }
   },
   {
@@ -560,43 +709,59 @@ export const ITEMS = [
     cat: 'pasta',
     name: 'spaghetti alla chitarra con astice',
     pron: 'spagetti alla kitarra kon asticze',
-    desc: 'Spaghetti z homarem, żółtymi pomidorami, papryką goccia, kolendrą i cytrynowym pangrattato.',
+    desc: 'spaghetti z homarem, żółtymi pomidorami, papryką goccia, kolendrą i cytrynowym pangrattato',
     price: '98',
     veg: null,
     pastaType: 'jajeczny',
     allergens: ['gluten', 'jaja', 'mleko', 'skorupiaki'],
-    serviceNotes: 'Ekskluzywne danie z mięsem z homara, aromatycznym sosem z żółtych pomidorów i papryczki goccia.',
-    ingIds: ['pastafresca', 'astice', 'pomodorogiallo', 'coriandolo', 'limone'],
+    serviceNotes: 'Spaghetti cięte na strunach z mięsem z homara, sosie z żółtych pomidorów i cytrynową posypką.',
+    ingIds: ['pastafresca', 'astice', 'pomodorogiallo', 'peperoncino', 'coriandolo', 'pane'],
+    testDesc: [
+      'spaghetti z ',
+      { ingId: 'astice', text: 'homarem' },
+      ', ',
+      { ingId: 'pomodorogiallo', text: 'żółtymi pomidorami' },
+      ', papryką ',
+      { ingId: 'peperoncino', text: 'goccia' },
+      ', ',
+      { ingId: 'coriandolo', text: 'kolendrą' },
+      ' i cytrynowym ',
+      { ingId: 'pane', text: 'pangrattato' }
+    ],
     components: [
-      { name: 'Makaron i Mięso z homara', ingIds: ['pastafresca', 'farina', 'uova', 'astice'] },
-      { name: 'Sos maślany z żółtymi pomidorami', ingIds: ['pomodorogiallo', 'burro', 'czosnek', 'peperoncino', 'wino', 'sale'] },
-      { name: 'Posypka & Zioła', ingIds: ['pane', 'limone', 'coriandolo'] }
+      { name: 'Składniki dania', ingIds: ['pastafresca', 'astice', 'pomodorogiallo', 'peperoncino', 'coriandolo', 'pane'] }
     ],
     tr: {
       name: { pl: 'Spaghetti z homarem', en: 'Spaghetti with lobster' },
-      desc: { en: 'Guitar-cut spaghetti with lobster meat, yellow tomato-butter sauce, goccia pepper and lemon breadcrumbs.' }
+      desc: { en: 'Spaghetti with lobster, yellow tomatoes, goccia pepper, coriander and lemon pangrattato.' }
     }
   },
   {
     id: 'p9',
     cat: 'pasta',
-    name: 'spaghettoni alla carbonara',
+    name: 'spaghettoni* alla carbonara',
     pron: 'spagettoni alla karbonara',
-    desc: 'Spaghettoni z guanciale, serem pecorino romano, parmezanem i konfitowanym jajkiem. Możliwa zamiana na spaghetti o obniżonej zawartości glutenu.',
+    desc: 'spaghettoni* z guanciale, serem pecorino i jajkiem konfitowanym',
     price: '48',
     veg: null,
     pastaType: 'bezjajeczny',
     allergens: ['gluten', 'jaja', 'mleko'],
-    serviceNotes: 'Opcja bezglutenowa: możliwość zamówienia na makaronie o obniżonej zawartości glutenu.',
-    ingIds: ['pastafresca', 'guanciale', 'pecorino', 'parmigiano', 'tuorlo'],
+    serviceNotes: '*Możliwa zamiana na spaghetti o obniżonej zawartości glutenu.',
+    ingIds: ['pastafresca', 'guanciale', 'pecorino', 'tuorlo'],
+    testDesc: [
+      'spaghettoni* z ',
+      { ingId: 'guanciale', text: 'guanciale' },
+      ', serem ',
+      { ingId: 'pecorino', text: 'pecorino' },
+      ' i ',
+      { ingId: 'tuorlo', text: 'jajkiem konfitowanym' }
+    ],
     components: [
-      { name: 'Makaron Spaghettoni', ingIds: ['pastafresca', 'farina', 'acqua'] },
-      { name: 'Sos Rzymski & Guanciale', ingIds: ['guanciale', 'pecorino', 'parmigiano', 'pepe', 'sale'] },
-      { name: 'Konfitowane żółtko', ingIds: ['tuorlo', 'uova'] }
+      { name: 'Baza carbonary', ingIds: ['pastafresca', 'guanciale', 'pecorino', 'parmigiano', 'tuorlo', 'pepe'] }
     ],
     tr: {
       name: { pl: 'Spaghettoni alla carbonara', en: 'Spaghettoni carbonara' },
-      desc: { en: 'Thick fresh spaghettoni with cured guanciale, pecorino, parmesan and confit egg yolk.' }
+      desc: { en: 'Spaghettoni with guanciale, pecorino cheese and confit egg yolk.' }
     }
   },
 
@@ -606,20 +771,28 @@ export const ITEMS = [
     cat: 'secondi',
     name: 'melanzane e parmigiano',
     pron: 'melandzane e parmidżano',
-    desc: 'Pieczony bakłażan z kremem parmezanowym, pomidorkami i perełkami parmezanowymi (v).',
+    desc: 'pieczony bakłażan z kremem parmezanowym, pomidorkami i perełkami parmezanowymi (v)',
     price: '52',
     veg: 'v',
     allergens: ['mleko', 'jaja', 'czosnek'],
-    serviceNotes: '✨ Całe danie jest całkowicie bezglutenowe (włącznie z chrupiącymi kulkami parmezanowymi).',
-    ingIds: ['melanzana', 'parmigiano', 'pomodorini', 'basilico'],
+    serviceNotes: '✨ Danie bezglutenowe! Pieczony bakłażan z perełkami i kremem z parmezanu.',
+    ingIds: ['melanzana', 'parmigiano', 'pomodorini'],
+    testDesc: [
+      'pieczony ',
+      { ingId: 'melanzana', text: 'bakłażan' },
+      ' z kremem ',
+      { ingId: 'parmigiano', text: 'parmezanowym' },
+      ', ',
+      { ingId: 'pomodorini', text: 'pomidorkami' },
+      ' i perełkami ',
+      { ingId: 'parmigiano', text: 'parmezanowymi' }
+    ],
     components: [
-      { name: 'Pieczone warzywa', ingIds: ['melanzana', 'pomodorini', 'sale'] },
-      { name: 'Pikantna glazura pomidorowa', ingIds: ['pomodoro', 'czosnek', 'peperoncino', 'olio'] },
-      { name: 'Sos parmezanowy & Perełki', ingIds: ['parmigiano', 'panna', 'uova', 'basilico', 'olio'] }
+      { name: 'Bakłażan i dodatki', ingIds: ['melanzana', 'parmigiano', 'pomodorini', 'basilico'] }
     ],
     tr: {
       name: { pl: 'Bakłażan z parmezanem (GF)', en: 'Eggplant parmesan (GF)' },
-      desc: { en: 'Roasted eggplant with parmesan cream, cherry tomatoes and GF parmesan pearls.' }
+      desc: { en: 'Roasted eggplant with parmesan cream, cherry tomatoes and parmesan pearls.' }
     }
   },
   {
@@ -627,20 +800,34 @@ export const ITEMS = [
     cat: 'secondi',
     name: 'filetto di orata con porri novelli',
     pron: 'filetto di orata kon porri nowelli',
-    desc: 'Filet z dorady z młodymi porami i ziemniakami, mulami, sosem maślanym z wermutem i kaparami.',
+    desc: 'filet z dorady z młodymi porami i ziemniakami, mulami, sosem maślanym z wermutem i kaparami',
     price: '98',
     veg: null,
     allergens: ['ryby', 'mleko', 'mięczaki'],
-    serviceNotes: 'Subtelny morsko-maślany sos o ziołowym aromacie z mulami i kaparami.',
-    ingIds: ['orata', 'cozze', 'porro', 'patate', 'burro'],
+    serviceNotes: 'Wykwintny filet z dorady na młodych porach i ziemniakach z mulami w sosie maślano-wermutowym.',
+    ingIds: ['orata', 'porro', 'patate', 'cozze', 'burro', 'vermut', 'capperi'],
+    testDesc: [
+      'filet z ',
+      { ingId: 'orata', text: 'dorady' },
+      ' z młodymi ',
+      { ingId: 'porro', text: 'porami' },
+      ' i ',
+      { ingId: 'patate', text: 'ziemniakami' },
+      ', ',
+      { ingId: 'cozze', text: 'mulami' },
+      ', sosem ',
+      { ingId: 'burro', text: 'maślanym' },
+      ' z ',
+      { ingId: 'vermut', text: 'wermutem' },
+      ' i ',
+      { ingId: 'capperi', text: 'kaparami' }
+    ],
     components: [
-      { name: 'Filet z dorady & Mule', ingIds: ['orata', 'cozze', 'sale'] },
-      { name: 'Warzywa w maśle & Sos wywarowy', ingIds: ['porro', 'patate', 'burro', 'vermut', 'sale'] },
-      { name: 'Dodatki i kapary', ingIds: ['capperi', 'erbe', 'olio'] }
+      { name: 'Składniki dania', ingIds: ['orata', 'porro', 'patate', 'cozze', 'burro', 'vermut', 'capperi'] }
     ],
     tr: {
       name: { pl: 'Filet z dorady z porami i mulami', en: 'Sea bream fillet with leeks and mussels' },
-      desc: { en: 'Sea bream fillet on baby leeks, potatoes and mussels in vermouth butter sauce.' }
+      desc: { en: 'Sea bream fillet with baby leeks, potatoes, mussels, butter sauce with vermouth and capers.' }
     }
   },
   {
@@ -648,21 +835,28 @@ export const ITEMS = [
     cat: 'secondi',
     name: 'cotoletta alla milanese',
     pron: 'kotoletta alla milaneze',
-    desc: 'Mediołański schab z kością, z kremem parmezanowym, sezonowymi sałatami i młodymi ziemniakami.',
+    desc: 'mediolański schab z kością, z kremem parmezanowym, sezonowymi sałatami i młodymi ziemniakami',
     price: '66',
     veg: null,
     allergens: ['gluten', 'jaja', 'mleko', 'gorczyca'],
-    serviceNotes: 'Zawsze serwujemy schab na sosie parmezanowym z dwoma osobnymi talerzykami (sałata z majlertów z winegretem + ziemniaki).',
-    ingIds: ['maiale', 'parmigiano', 'limone', 'insalata', 'patate'],
+    serviceNotes: 'Schab na sosie parmezanowym podawany z dwoma osobnymi talerzykami dodatków.',
+    ingIds: ['maiale', 'parmigiano', 'insalata', 'patate'],
+    testDesc: [
+      'mediolański ',
+      { ingId: 'maiale', text: 'schab z kością' },
+      ', z kremem ',
+      { ingId: 'parmigiano', text: 'parmezanowym' },
+      ', sezonowymi ',
+      { ingId: 'insalata', text: 'sałatami' },
+      ' i młodymi ',
+      { ingId: 'patate', text: 'ziemniakami' }
+    ],
     components: [
-      { name: 'Panierowany schab z kością', ingIds: ['maiale', 'farina', 'uova', 'pane', 'parmigiano', 'sale'] },
-      { name: 'Sos parmezanowy i cytryna', ingIds: ['parmigiano', 'panna', 'limone'] },
-      { name: 'Talerzyk 1: Sałata Majlertów', ingIds: ['insalata', 'gorczyca', 'olio', 'aceto'] },
-      { name: 'Talerzyk 2: Ziemniaki', ingIds: ['patate', 'burro', 'sale'] }
+      { name: 'Główne elementy', ingIds: ['maiale', 'parmigiano', 'insalata', 'patate', 'limone'] }
     ],
     tr: {
       name: { pl: 'Kotlet po mediolańsku', en: 'Milanese pork cutlet' },
-      desc: { en: 'Bone-in fried pork cutlet on parmesan cream, served with two side plates: Majlert salad and buttered potatoes.' }
+      desc: { en: 'Milanese bone-in pork cutlet with parmesan cream, seasonal salads and baby potatoes.' }
     }
   },
   {
@@ -670,16 +864,27 @@ export const ITEMS = [
     cat: 'secondi',
     name: 'filetto di manzo',
     pron: 'filetto di mandzo',
-    desc: 'Stek z polędwicy wołowej z sosem z zielonego pieprzu, sałatką z cukinii i ziemniaczano-cytrynowym puree.',
+    desc: 'stek z polędwicy wołowej z sosem z zielonego pieprzu, sałatką z cukinii i ziemniaczano - cytrynowym puree',
     price: '124',
     veg: null,
     allergens: ['mleko'],
-    serviceNotes: 'Soczysty stek z polędwicy z wyrazistym sosem z zielonego pieprzu i kremowym ziemniaczano-cytrynowym puree.',
+    serviceNotes: 'Polędwica wołowa z pikantnym sosem z zielonego pieprzu i ziemniaczano-cytrynowym puree.',
     ingIds: ['manzo', 'pepeverde', 'zucchine', 'patate', 'limone'],
+    testDesc: [
+      'stek z ',
+      { ingId: 'manzo', text: 'polędwicy wołowej' },
+      ' z sosem z ',
+      { ingId: 'pepeverde', text: 'zielonego pieprzu' },
+      ', sałatką z ',
+      { ingId: 'zucchine', text: 'cukinii' },
+      ' i ',
+      { ingId: 'patate', text: 'ziemniaczano' },
+      ' - ',
+      { ingId: 'limone', text: 'cytrynowym' },
+      ' puree'
+    ],
     components: [
-      { name: 'Stek z polędwicy wołowej', ingIds: ['manzo', 'sale'] },
-      { name: 'Sos z zielonego pieprzu', ingIds: ['pepeverde', 'panna', 'burro'] },
-      { name: 'Dodatki', ingIds: ['zucchine', 'patate', 'limone', 'burro'] }
+      { name: 'Główne składniki', ingIds: ['manzo', 'pepeverde', 'zucchine', 'patate', 'limone'] }
     ],
     tr: {
       name: { pl: 'Stek z polędwicy wołowej', en: 'Beef tenderloin steak' },
@@ -693,15 +898,25 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'gelato allo yogurt e lamponi con melone',
     pron: 'dżelato allo jogurt e lamponi kon melone',
-    desc: 'Jogurtowo-malinowe lody soft serve z melonem, oliwą z oliwek i kwiatem czarnego bzu.',
+    desc: 'jogurtowo - malinowe lody soft serve z melonem, oliwą z oliwek i kwiatem czarnego bzu',
     price: '22',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Lekki i orzeźwiający deser lodowy ze świeżym melonem, oliwą oraz aromatem kwiatu czarnego bzu.',
+    serviceNotes: 'Orzeźwiające lody soft serve z oliwą z oliwek i nutą czarnego bzu.',
     ingIds: ['yogurt', 'lamponi', 'melone', 'olio', 'bez'],
+    testDesc: [
+      { ingId: 'yogurt', text: 'jogurtowo' },
+      ' - ',
+      { ingId: 'lamponi', text: 'malinowe' },
+      ' lody soft serve z ',
+      { ingId: 'melone', text: 'melonem' },
+      ', ',
+      { ingId: 'olio', text: 'oliwą z oliwek' },
+      ' i kwiatem ',
+      { ingId: 'bez', text: 'czarnego bzu' }
+    ],
     components: [
-      { name: 'Lody jogurtowo-malinowe soft', ingIds: ['yogurt', 'lamponi', 'panna', 'zucchero'] },
-      { name: 'Wykończenie', ingIds: ['melone', 'olio', 'bez'] }
+      { name: 'Deser lodowy', ingIds: ['yogurt', 'lamponi', 'melone', 'olio', 'bez'] }
     ],
     tr: {
       name: { pl: 'Lody jogurtowo-malinowe z melonem', en: 'Yogurt-raspberry soft serve with melon' },
@@ -713,20 +928,26 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'torta di stracchino con lamponi',
     pron: 'torta di strakkino kon lamponi',
-    desc: 'Kremowe ciastko z włoskiego sera Stracchino, z orzechowo-słonym spodem i świeżymi malinami.',
+    desc: 'kremowe ciastko z włoskiego sera Stracchino, z orzechowo - słonym spodem i świeżymi malinami',
     price: '24',
     veg: 'v',
     allergens: ['mleko', 'gluten', 'orzechy'],
-    serviceNotes: 'Unikalny sernik ze świeżego włoskiego sera Stracchino ze słonym orzechowym spodem.',
-    ingIds: ['stracchino', 'nocciole', 'lamponi', 'panna'],
+    serviceNotes: 'Sernik z włoskiego sera Stracchino ze słonym orzechowym spodem i malinami.',
+    ingIds: ['stracchino', 'nocciole', 'lamponi'],
+    testDesc: [
+      'kremowe ciastko z włoskiego sera ',
+      { ingId: 'stracchino', text: 'Stracchino' },
+      ', z ',
+      { ingId: 'nocciole', text: 'orzechowo' },
+      ' - słonym spodem i świeżymi ',
+      { ingId: 'lamponi', text: 'malinami' }
+    ],
     components: [
-      { name: 'Krem serowy Stracchino', ingIds: ['stracchino', 'panna', 'zucchero'] },
-      { name: 'Słony spód orzechowy', ingIds: ['nocciole', 'burro', 'sale'] },
-      { name: 'Maliny', ingIds: ['lamponi'] }
+      { name: 'Składniki ciasta', ingIds: ['stracchino', 'nocciole', 'lamponi', 'panna'] }
     ],
     tr: {
       name: { pl: 'Sernik z sera Stracchino z malinami', en: 'Stracchino cheese cake with raspberries' },
-      desc: { en: 'Chilled cream cake made of Italian Stracchino cheese with salted walnut crust and fresh raspberries.' }
+      desc: { en: 'Cream cake made of Italian Stracchino cheese with salted walnut crust and fresh raspberries.' }
     }
   },
   {
@@ -734,19 +955,26 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'maritozzo con la panna e mirtilli',
     pron: 'maritocco kon la panna e mirtilli',
-    desc: 'Rzymska bułeczka z bitą śmietaną i świeżymi jagodami.',
+    desc: 'rzymska bułeczka z bitą śmietaną i świeżymi jagodami',
     price: '22',
     veg: 'v',
     allergens: ['gluten', 'mleko', 'jaja'],
-    serviceNotes: 'Tradycyjna maślana bułeczka rzymska obficie wypełniona bitą śmietaną i jagodami.',
+    serviceNotes: 'Rzymska maślana bułeczka nadziewana bitą śmietaną i świeżymi jagodami.',
     ingIds: ['brioche', 'panna', 'mirtilli'],
+    testDesc: [
+      'rzymska ',
+      { ingId: 'brioche', text: 'bułeczka' },
+      ' z bitą ',
+      { ingId: 'panna', text: 'śmietaną' },
+      ' i świeżymi ',
+      { ingId: 'mirtilli', text: 'jagodami' }
+    ],
     components: [
-      { name: 'Bułeczka maślana Maritozzo', ingIds: ['brioche', 'farina', 'burro', 'uova'] },
-      { name: 'Nadzienie', ingIds: ['panna', 'zucchero', 'mirtilli'] }
+      { name: 'Elementy deseru', ingIds: ['brioche', 'panna', 'mirtilli'] }
     ],
     tr: {
       name: { pl: 'Maritozzo ze śmietaną i jagodami', en: 'Maritozzo with cream and blueberries' },
-      desc: { en: 'Roman brioche bun stuffed with whipped cream and fresh blueberries.' }
+      desc: { en: 'Roman brioche bun with whipped cream and fresh blueberries.' }
     }
   },
   {
@@ -754,15 +982,23 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'panna cotta alla camomilla con rabarbaro',
     pron: 'panna kotta alla kamomilla kon rabarbaro',
-    desc: 'Rumiankowa panna cotta z rabarbarem i oliwą z oliwek.',
+    desc: 'rumiankowa panna cotta z rabarbarem i oliwą z oliwek',
     price: '20',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Subtelny deser o aromacie rumianku przełamany kwaskowatym rabarbarem i oliwą.',
+    serviceNotes: 'Rumiankowa panna cotta serwowana z rabarbarem i oliwą z oliwek.',
     ingIds: ['camomilla', 'panna', 'rabarbaro', 'olio'],
+    testDesc: [
+      { ingId: 'camomilla', text: 'rumiankowa' },
+      ' ',
+      { ingId: 'panna', text: 'panna cotta' },
+      ' z ',
+      { ingId: 'rabarbaro', text: 'rabarbarem' },
+      ' i ',
+      { ingId: 'olio', text: 'oliwą z oliwek' }
+    ],
     components: [
-      { name: 'Panna cotta rumiankowa', ingIds: ['panna', 'camomilla', 'zucchero'] },
-      { name: 'Rabarbar & Oliwa', ingIds: ['rabarbaro', 'olio'] }
+      { name: 'Składniki deseru', ingIds: ['camomilla', 'panna', 'rabarbaro', 'olio'] }
     ],
     tr: {
       name: { pl: 'Panna cotta rumiankowa z rabarbarem', en: 'Chamomile panna cotta with rhubarb' },
@@ -774,16 +1010,24 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'profiterole',
     pron: 'profiterol',
-    desc: 'Ciasto "choux" z waniliową bitą śmietaną i czekoladą.',
+    desc: 'ciasto "choux" z waniliową bitą śmietaną i czekoladą',
     price: '22',
     veg: 'v',
     allergens: ['gluten', 'jaja', 'mleko'],
-    serviceNotes: 'Efektowny serwis przy stole — gorącą czekoladę polewamy bezpośrednio przy gościu.',
-    ingIds: ['pastachoux', 'panna', 'cioccolato', 'wanilia'],
+    serviceNotes: 'Profiterolki nadziewane śmietaną waniliową polewane gorącą czekoladą przy stole.',
+    ingIds: ['pastachoux', 'panna', 'wanilia', 'cioccolato'],
+    testDesc: [
+      'ciasto ',
+      { ingId: 'pastachoux', text: '"choux"' },
+      ' z ',
+      { ingId: 'wanilia', text: 'waniliową' },
+      ' bitą ',
+      { ingId: 'panna', text: 'śmietaną' },
+      ' i ',
+      { ingId: 'cioccolato', text: 'czekoladą' }
+    ],
     components: [
-      { name: 'Profiterolki (ciasto choux)', ingIds: ['pastachoux', 'farina', 'burro', 'uova'] },
-      { name: 'Waniliowa bita śmietana', ingIds: ['panna', 'wanilia', 'zucchero'] },
-      { name: 'Gorąca czekolada', ingIds: ['cioccolato'] }
+      { name: 'Główne elementy', ingIds: ['pastachoux', 'panna', 'wanilia', 'cioccolato'] }
     ],
     tr: {
       name: { pl: 'Profiterolki z gorącą czekoladą', en: 'Profiteroles with hot chocolate' },
@@ -795,19 +1039,25 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'granita siciliana',
     pron: 'granita sycyliana',
-    desc: 'Cytrynowa granita z bazylią (0%) / cytrynowa granita z limoncello.',
+    desc: 'cytrynowa granita z bazylią (0%) / cytrynowa granita z limoncello',
     price: '18/26',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Orzeźwiająca granita cytrynowa — wersja 0% z bazylią za 18 zł lub wersja z limoncello za 26 zł.',
+    serviceNotes: 'Cytrynowa granita: z bazylią (0% - 18 zł) lub z limoncello (26 zł).',
     ingIds: ['limone', 'basilico', 'limoncello'],
+    testDesc: [
+      { ingId: 'limone', text: 'cytrynowa' },
+      ' granita z ',
+      { ingId: 'basilico', text: 'bazylią' },
+      ' (0%) / cytrynowa granita z ',
+      { ingId: 'limoncello', text: 'limoncello' }
+    ],
     components: [
-      { name: 'Baza granity', ingIds: ['limone', 'zucchero', 'acqua'] },
-      { name: 'Dodatki', ingIds: ['basilico', 'limoncello'] }
+      { name: 'Warianty granity', ingIds: ['limone', 'basilico', 'limoncello'] }
     ],
     tr: {
       name: { pl: 'Granita sycylijska', en: 'Sicilian granita' },
-      desc: { en: 'Lemon granita with basil (non-alcoholic, 18 zł) or with limoncello (26 zł).' }
+      desc: { en: 'Lemon granita with basil (non-alcoholic) or with limoncello.' }
     }
   },
   {
@@ -815,20 +1065,31 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'tiramisù',
     pron: 'tiramisu',
-    desc: 'Klasyczne tiramisù.',
+    desc: 'klasyczne tiramisù',
     price: '22',
     veg: 'v',
     allergens: ['gluten', 'jaja', 'mleko'],
     serviceNotes: 'Klasyczne włoskie tiramisù z mascarpone, biszkoptami, espresso i amaretto.',
-    ingIds: ['mascarpone', 'savoiardi', 'caffe', 'amaretto', 'cacao', 'tuorlo'],
+    ingIds: ['mascarpone', 'savoiardi', 'caffe', 'amaretto', 'cacao'],
+    testDesc: [
+      'klasyczne tiramisù (krem ',
+      { ingId: 'mascarpone', text: 'mascarpone' },
+      ', biszkopty ',
+      { ingId: 'savoiardi', text: 'savoiardi' },
+      ', napar ',
+      { ingId: 'caffe', text: 'espresso' },
+      ', likier ',
+      { ingId: 'amaretto', text: 'amaretto' },
+      ' oraz ',
+      { ingId: 'cacao', text: 'kakao' },
+      ')'
+    ],
     components: [
-      { name: 'Krem mascarpone', ingIds: ['mascarpone', 'tuorlo', 'uova', 'zucchero'] },
-      { name: 'Biszkopty z kawą i amaretto', ingIds: ['savoiardi', 'caffe', 'amaretto'] },
-      { name: 'Kakao', ingIds: ['cacao'] }
+      { name: 'Składniki tiramisù', ingIds: ['mascarpone', 'savoiardi', 'caffe', 'amaretto', 'cacao'] }
     ],
     tr: {
       name: { pl: 'Klasyczne Tiramisù', en: 'Classic Tiramisù' },
-      desc: { en: 'Classic tiramisù with mascarpone, espresso, amaretto and cocoa.' }
+      desc: { en: 'Classic tiramisù.' }
     }
   },
   {
@@ -836,19 +1097,24 @@ export const ITEMS = [
     cat: 'dolce',
     name: 'sorbetto al limone',
     pron: 'sorbetto al limone',
-    desc: 'Sorbet cytrynowy.',
+    desc: 'sorbet cytrynowy',
     price: '14',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: '🥛 Pamiętaj informować gości: sorbet zawiera laktozę (dodatek mleka)! Serwujemy na spodku z białą serwetką „rozetką”.',
-    ingIds: ['limone', 'zucchero', 'panna'],
+    serviceNotes: '🥛 Zawiera laktozę (dodatek śmietanki/mleka)! Serwujemy na spodku.',
+    ingIds: ['limone', 'panna'],
+    testDesc: [
+      'sorbet ',
+      { ingId: 'limone', text: 'cytrynowy' },
+      ' z dodatkiem ',
+      { ingId: 'panna', text: 'śmietanki (laktoza)' }
+    ],
     components: [
-      { name: 'Masa sorbetowa (zawiera laktozę)', ingIds: ['limone', 'zucchero', 'panna', 'acqua'] },
-      { name: 'Forma podania', ingIds: ['limone'] }
+      { name: 'Masa sorbetowa', ingIds: ['limone', 'panna'] }
     ],
     tr: {
       name: { pl: 'Sorbet cytrynowy', en: 'Lemon sorbet' },
-      desc: { en: 'Refreshing lemon sorbet. Note: Contains lactose/dairy!' }
+      desc: { en: 'Lemon sorbet. Contains dairy!' }
     }
   },
 
@@ -858,12 +1124,16 @@ export const ITEMS = [
     cat: 'bibite',
     name: 'świeży sok pomarańczowy',
     pron: 'swiezy sok pomaranczowy',
-    desc: 'Świeżo wyciskany sok z pomarańczy.',
+    desc: 'świeżo wyciskany sok z pomarańczy',
     price: '16',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Sok wyciskany na świeżo na zamówienie gościa.',
+    serviceNotes: 'Sok wyciskany na świeżo z pomarańczy.',
     ingIds: ['arancia'],
+    testDesc: [
+      'świeżo wyciskany sok z ',
+      { ingId: 'arancia', text: 'pomarańczy' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['arancia'] }],
     tr: { name: { pl: 'Świeży sok pomarańczowy', en: 'Fresh orange juice' }, desc: { en: 'Freshly squeezed orange juice.' } }
   },
@@ -872,69 +1142,94 @@ export const ITEMS = [
     cat: 'bibite',
     name: 'limonata',
     pron: 'limonata',
-    desc: 'Domowa lemoniada z bergamotką.',
+    desc: 'domowa lemoniada z bergamotką',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Orzeźwiająca domowa lemoniada o wyjątkowym cytrusowym aromacie bergamotki.',
-    ingIds: ['limone', 'bergamotka', 'zucchero', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['limone', 'bergamotka', 'acqua', 'zucchero'] }],
-    tr: { name: { pl: 'Domowa lemoniada z bergamotką', en: 'Homemade bergamot lemonade' }, desc: { en: 'Homemade lemonade infused with bergamot.' } }
+    serviceNotes: 'Orzeźwiająca domowa lemoniada z cytryn i bergamotki.',
+    ingIds: ['limone', 'bergamotka'],
+    testDesc: [
+      'domowa ',
+      { ingId: 'limone', text: 'lemoniada' },
+      ' z ',
+      { ingId: 'bergamotka', text: 'bergamotką' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['limone', 'bergamotka'] }],
+    tr: { name: { pl: 'Domowa lemoniada z bergamotką', en: 'Homemade bergamot lemonade' }, desc: { en: 'Homemade lemonade with bergamot.' } }
   },
   {
     id: 'b3',
     cat: 'bibite',
     name: 'tè freddo',
     pron: 'te freddo',
-    desc: 'Domowa brzoskwiniowa ice tea.',
+    desc: 'domowa brzoskwiniowa ice tea',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Domowa mrożona herbata brzoskwiniowa podawana na lodzie.',
-    ingIds: ['pesca', 'acqua', 'zucchero'],
-    components: [{ name: 'Składniki', ingIds: ['pesca', 'acqua', 'zucchero'] }],
-    tr: { name: { pl: 'Mrożona herbata brzoskwiniowa', en: 'Peach ice tea' }, desc: { en: 'Homemade peach ice tea served over ice.' } }
+    serviceNotes: 'Domowa mrożona herbata brzoskwiniowa podawana z lodem.',
+    ingIds: ['pesca'],
+    testDesc: [
+      'domowa ',
+      { ingId: 'pesca', text: 'brzoskwiniowa' },
+      ' ice tea'
+    ],
+    components: [{ name: 'Składniki', ingIds: ['pesca'] }],
+    tr: { name: { pl: 'Mrożona herbata brzoskwiniowa', en: 'Peach ice tea' }, desc: { en: 'Homemade peach ice tea.' } }
   },
   {
     id: 'b4',
     cat: 'bibite',
     name: 'soda',
     pron: 'soda',
-    desc: 'Włoskie napoje gazowane: chinotto, aranciata.',
+    desc: 'chinotto, aranciata',
     price: '16',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Tradycyjne włoskie napoje w butelkach: gorzkawa chinotto lub pomarańczowa aranciata.',
-    ingIds: ['arancia', 'acqua', 'zucchero'],
-    components: [{ name: 'Warianty', ingIds: ['arancia', 'zucchero', 'acqua'] }],
-    tr: { name: { pl: 'Włoska soda', en: 'Italian soda' }, desc: { en: 'Italian sparkling drinks: chinotto or aranciata.' } }
+    serviceNotes: 'Włoskie napoje gazowane w butelkach: chinotto lub aranciata.',
+    ingIds: ['arancia'],
+    testDesc: [
+      'włoskie napoje gazowane: chinotto, ',
+      { ingId: 'arancia', text: 'aranciata' }
+    ],
+    components: [{ name: 'Warianty', ingIds: ['arancia'] }],
+    tr: { name: { pl: 'Włoska soda', en: 'Italian soda' }, desc: { en: 'Chinotto, aranciata.' } }
   },
   {
     id: 'b5',
     cat: 'bibite',
     name: 'cola',
     pron: 'cola',
-    desc: 'Coca-cola / Coca-cola zero.',
+    desc: 'coca-cola, cola zero',
     price: '12',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Podawane dobrze schłodzone ze szklanką z lodem i plastrem cytryny.',
-    ingIds: ['acqua', 'zucchero'],
-    components: [{ name: 'Składniki', ingIds: ['acqua', 'zucchero'] }],
-    tr: { name: { pl: 'Cola / Cola Zero', en: 'Coca-Cola / Zero' }, desc: { en: 'Classic Coca-Cola or Coca-Cola Zero.' } }
+    serviceNotes: 'Podawana schłodzona z plastrem cytryny i lodem.',
+    ingIds: ['limone'],
+    testDesc: [
+      'coca-cola, cola zero z plastrem ',
+      { ingId: 'limone', text: 'cytryny' }
+    ],
+    components: [{ name: 'Warianty', ingIds: ['limone'] }],
+    tr: { name: { pl: 'Cola / Cola Zero', en: 'Coca-Cola / Zero' }, desc: { en: 'Coca-cola, cola zero.' } }
   },
   {
     id: 'b6',
     cat: 'bibite',
     name: 'succo',
     pron: 'sukko',
-    desc: 'Włoski sok brzoskwiniowy lub gruszkowy.',
+    desc: 'włoski sok brzoskwiniowy lub gruszkowy',
     price: '16',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Gęste, aromatyczne włoskie soki owocowe (pesca / pera).',
+    serviceNotes: 'Włoskie soki owocowe (pesca / pera).',
     ingIds: ['pesca', 'pera'],
-    components: [{ name: 'Warianty', ingIds: ['pesca', 'pera'] }],
+    testDesc: [
+      'włoski sok ',
+      { ingId: 'pesca', text: 'brzoskwiniowy' },
+      ' lub ',
+      { ingId: 'pera', text: 'gruszkowy' }
+    ],
+    components: [{ name: 'Smaki', ingIds: ['pesca', 'pera'] }],
     tr: { name: { pl: 'Włoski sok owocowy', en: 'Italian fruit juice' }, desc: { en: 'Italian peach or pear juice.' } }
   },
   {
@@ -942,28 +1237,38 @@ export const ITEMS = [
     cat: 'bibite',
     name: 'acqua',
     pron: 'akkwa',
-    desc: 'Woda San Pellegrino / Aqua Panna (750 ml / 250 ml).',
+    desc: 'woda San Pellegrino / Aqua Panna 750 ml / 250ml',
     price: '22/14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Włoska woda mineralna gazowana (San Pellegrino) lub niegazowana (Aqua Panna). Ceny: 250ml = 14 zł, 750ml = 22 zł.',
+    serviceNotes: 'San Pellegrino (gazowana) lub Aqua Panna (niegazowana).',
     ingIds: ['acqua'],
-    components: [{ name: 'Warianty', ingIds: ['acqua'] }],
-    tr: { name: { pl: 'Woda mineralna', en: 'Mineral water' }, desc: { en: 'San Pellegrino sparkling or Aqua Panna still mineral water.' } }
+    testDesc: [
+      'woda ',
+      { ingId: 'acqua', text: 'San Pellegrino / Aqua Panna' }
+    ],
+    components: [{ name: 'Opcje', ingIds: ['acqua'] }],
+    tr: { name: { pl: 'Woda mineralna', en: 'Mineral water' }, desc: { en: 'San Pellegrino / Aqua Panna water.' } }
   },
   {
     id: 'b8',
     cat: 'bibite',
     name: 'tonica j.gasco',
     pron: 'tonika dżi gasko',
-    desc: 'Toniki J.Gasco: indian tonic, aperitivo bitter, sodarosa grapefruit, fiori di sambuco.',
+    desc: 'indian tonic, aperitivo bitter, sodarosa grapefruit, fiori di sambuco',
     price: '18',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Premium włoskie toniki i miksery marki J.Gasco w różnych smakach.',
-    ingIds: ['arancia', 'bez', 'acqua'],
-    components: [{ name: 'Smaki', ingIds: ['arancia', 'bez', 'acqua'] }],
-    tr: { name: { pl: 'Tonik J.Gasco', en: 'J.Gasco tonic' }, desc: { en: 'Premium Italian tonics: indian tonic, aperitivo bitter, sodarosa grapefruit, elderflower.' } }
+    serviceNotes: 'Włoskie miksery J.Gasco w różnych smakach.',
+    ingIds: ['arancia', 'bez'],
+    testDesc: [
+      'indian tonic, aperitivo bitter, sodarosa ',
+      { ingId: 'arancia', text: 'grapefruit' },
+      ', fiori di ',
+      { ingId: 'bez', text: 'sambuco' }
+    ],
+    components: [{ name: 'Smaki', ingIds: ['arancia', 'bez'] }],
+    tr: { name: { pl: 'Tonik J.Gasco', en: 'J.Gasco tonic' }, desc: { en: 'Indian tonic, aperitivo bitter, sodarosa grapefruit, fiori di sambuco.' } }
   },
 
   // --- CAFFÈ ---
@@ -972,55 +1277,74 @@ export const ITEMS = [
     cat: 'caffe',
     name: 'caffè',
     pron: 'kaffe',
-    desc: 'Klasyczne włoskie espresso.',
+    desc: 'klasyczne włoskie espresso',
     price: '9',
     veg: 'vg',
     allergens: [],
     serviceNotes: 'Pojedyncze, esencjonalne espresso.',
-    ingIds: ['caffe', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['caffe', 'acqua'] }],
-    tr: { name: { pl: 'Espresso', en: 'Espresso' }, desc: { en: 'Classic single espresso shot.' } }
+    ingIds: ['caffe'],
+    testDesc: [
+      'klasyczne włoskie ',
+      { ingId: 'caffe', text: 'espresso' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['caffe'] }],
+    tr: { name: { pl: 'Espresso', en: 'Espresso' }, desc: { en: 'Classic Italian espresso.' } }
   },
   {
     id: 'c2',
     cat: 'caffe',
     name: 'macchiato',
     pron: 'makkiato',
-    desc: 'Espresso z odrobiną spienionego mleka.',
+    desc: 'espresso z odrobiną spienionego mleka',
     price: '10',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Espresso "poplamione" odrobiną gorącego spienionego mleka.',
+    serviceNotes: 'Espresso poplamione odrobiną gorącego spienionego mleka.',
     ingIds: ['caffe', 'panna'],
+    testDesc: [
+      { ingId: 'caffe', text: 'espresso' },
+      ' z odrobiną spienionego ',
+      { ingId: 'panna', text: 'mleka' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['caffe', 'panna'] }],
-    tr: { name: { pl: 'Espresso macchiato', en: 'Espresso macchiato' }, desc: { en: 'Single espresso with a dash of foamed milk.' } }
+    tr: { name: { pl: 'Espresso macchiato', en: 'Espresso macchiato' }, desc: { en: 'Espresso with a dash of foamed milk.' } }
   },
   {
     id: 'c3',
     cat: 'caffe',
     name: 'caffè doppio / lungo',
     pron: 'kaffe doppio / lungo',
-    desc: 'Podwójne espresso lub przedłużane espresso.',
+    desc: 'podwójne espresso lub przedłużane espresso',
     price: '12',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Doppio = 2x shot espresso. Lungo = espresso z większą ilością wody.',
+    serviceNotes: 'Doppio = podwójne espresso. Lungo = przedłużana kawa z większą ilością wody.',
     ingIds: ['caffe', 'acqua'],
+    testDesc: [
+      'podwójne ',
+      { ingId: 'caffe', text: 'espresso' },
+      ' lub przedłużane espresso z ',
+      { ingId: 'acqua', text: 'wodą' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['caffe', 'acqua'] }],
-    tr: { name: { pl: 'Kawa doppio / lungo', en: 'Double espresso / lungo' }, desc: { en: 'Double shot espresso or extended espresso.' } }
+    tr: { name: { pl: 'Kawa doppio / lungo', en: 'Double espresso / lungo' }, desc: { en: 'Double espresso or extended espresso.' } }
   },
   {
     id: 'c4',
     cat: 'caffe',
     name: 'caffè filtrato / freddo',
     pron: 'kaffe filtrato / freddo',
-    desc: 'Kawa przelewowa lub kawa mrożona.',
+    desc: 'kawa przelewowa lub kawa mrożona',
     price: '12',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Filtrato = czarna kawa przelewowa. Freddo = mrożona czarna kawa.',
-    ingIds: ['caffe', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['caffe', 'acqua'] }],
+    serviceNotes: 'Filtrato = kawa przelewowa. Freddo = mrożona kawa.',
+    ingIds: ['caffe'],
+    testDesc: [
+      { ingId: 'caffe', text: 'kawa' },
+      ' przelewowa lub kawa mrożona'
+    ],
+    components: [{ name: 'Składniki', ingIds: ['caffe'] }],
     tr: { name: { pl: 'Kawa przelewowa / mrożona', en: 'Drip coffee / iced coffee' }, desc: { en: 'Filter drip coffee or cold iced black coffee.' } }
   },
   {
@@ -1028,70 +1352,96 @@ export const ITEMS = [
     cat: 'caffe',
     name: 'cappuccino',
     pron: 'kappuczino',
-    desc: 'Espresso ze spienionym aksamitnym mlekiem.',
+    desc: 'espresso ze spienionym aksamitnym mlekiem',
     price: '14',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Klasyczne włoskie cappuccino z gęstą mleczną pianką.',
+    serviceNotes: 'Włoskie cappuccino z aksamitną gęstą mleczną pianką.',
     ingIds: ['caffe', 'panna'],
+    testDesc: [
+      { ingId: 'caffe', text: 'espresso' },
+      ' ze spienionym aksamitnym ',
+      { ingId: 'panna', text: 'mlekiem' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['caffe', 'panna'] }],
-    tr: { name: { pl: 'Cappuccino', en: 'Cappuccino' }, desc: { en: 'Espresso topped with steamed milk foam.' } }
+    tr: { name: { pl: 'Cappuccino', en: 'Cappuccino' }, desc: { en: 'Espresso with steamed milk.' } }
   },
   {
     id: 'c6',
     cat: 'caffe',
     name: 'latte',
     pron: 'latte',
-    desc: 'Spienione mleko z delikatnym espresso.',
+    desc: 'spienione mleko z delikatnym espresso',
     price: '16',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Duża mleczna kawa serwowana w wysokiej szklance.',
-    ingIds: ['caffe', 'panna'],
-    components: [{ name: 'Składniki', ingIds: ['caffe', 'panna'] }],
-    tr: { name: { pl: 'Caffè latte', en: 'Caffè latte' }, desc: { en: 'Large steamed milk coffee with espresso shot.' } }
+    serviceNotes: 'Duża mleczna kawa w wysokiej szklance.',
+    ingIds: ['panna', 'caffe'],
+    testDesc: [
+      'spienione ',
+      { ingId: 'panna', text: 'mleko' },
+      ' z delikatnym ',
+      { ingId: 'caffe', text: 'espresso' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['panna', 'caffe'] }],
+    tr: { name: { pl: 'Caffè latte', en: 'Caffè latte' }, desc: { en: 'Steamed milk with delicate espresso.' } }
   },
   {
     id: 'c7',
     cat: 'caffe',
     name: 'caffè affogato',
     pron: 'kaffe affogato',
-    desc: 'Gorące espresso wlane na gałkę lodów waniliowych.',
+    desc: 'gorące espresso wlane na gałkę lodów waniliowych',
     price: '16',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Klasyczny włoski deser kawowy: porcja gorącego espresso wlana na zimne lody.',
-    ingIds: ['caffe', 'panna', 'wanilia'],
-    components: [{ name: 'Składniki', ingIds: ['caffe', 'panna', 'wanilia'] }],
-    tr: { name: { pl: 'Affogato', en: 'Affogato' }, desc: { en: 'Hot espresso poured over a scoop of vanilla ice cream.' } }
+    serviceNotes: 'Gorące espresso wlewane na zimne lody waniliowe.',
+    ingIds: ['caffe', 'wanilia', 'panna'],
+    testDesc: [
+      'gorące ',
+      { ingId: 'caffe', text: 'espresso' },
+      ' wlane na gałkę lodów ',
+      { ingId: 'wanilia', text: 'waniliowych' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['caffe', 'wanilia', 'panna'] }],
+    tr: { name: { pl: 'Affogato', en: 'Affogato' }, desc: { en: 'Hot espresso poured over vanilla ice cream.' } }
   },
   {
     id: 'c8',
     cat: 'caffe',
     name: 'tonic espresso',
     pron: 'tonik espresso',
-    desc: 'Espresso wlane na lód z tonikiem.',
+    desc: 'espresso wlane na lód z tonikiem',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Orzeźwiający napój kawowy — musujący tonik przełamany mocnym espresso.',
-    ingIds: ['caffe', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['caffe', 'acqua'] }],
-    tr: { name: { pl: 'Tonic espresso', en: 'Espresso tonic' }, desc: { en: 'Espresso poured over chilled sparkling tonic water.' } }
+    serviceNotes: 'Musujący tonik z lodem i wlanym espresso.',
+    ingIds: ['caffe', 'arancia'],
+    testDesc: [
+      { ingId: 'caffe', text: 'espresso' },
+      ' wlane na lód z ',
+      { ingId: 'arancia', text: 'tonikiem' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['caffe', 'arancia'] }],
+    tr: { name: { pl: 'Tonic espresso', en: 'Espresso tonic' }, desc: { en: 'Espresso poured over ice with tonic.' } }
   },
   {
     id: 'c9',
     cat: 'caffe',
     name: 'cioccolato',
     pron: 'czokkolato',
-    desc: 'Gęsta włoska gorąca czekolada.',
+    desc: 'gęsta włoska gorąca czekolada',
     price: '14',
     veg: 'v',
     allergens: ['mleko'],
-    serviceNotes: 'Bardzo gęsta, aromatyczna czekolada podawana na gorąco.',
-    ingIds: ['cioccolato', 'panna', 'cacao'],
-    components: [{ name: 'Składniki', ingIds: ['cioccolato', 'panna', 'cacao'] }],
-    tr: { name: { pl: 'Gorąca czekolada', en: 'Hot chocolate' }, desc: { en: 'Rich and thick Italian hot chocolate.' } }
+    serviceNotes: 'Gęsta i aromatyczna czekolada podawana na gorąco.',
+    ingIds: ['cioccolato', 'cacao'],
+    testDesc: [
+      'gęsta włoska gorąca ',
+      { ingId: 'cioccolato', text: 'czekolada' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['cioccolato', 'cacao'] }],
+    tr: { name: { pl: 'Gorąca czekolada', en: 'Hot chocolate' }, desc: { en: 'Thick Italian hot chocolate.' } }
   },
 
   // --- TÈ E INFUSI ---
@@ -1100,83 +1450,109 @@ export const ITEMS = [
     cat: 'te',
     name: 'tè nero',
     pron: 'te nero',
-    desc: 'Klasyczna czarna herbata.',
+    desc: 'czarna herbata',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Głęboka w smaku czarna herbata serwowana w dzbanku.',
+    serviceNotes: 'Klasyczna czarna herbata serwowana w dzbanku.',
     ingIds: ['acqua'],
+    testDesc: [
+      'czarna ',
+      { ingId: 'acqua', text: 'herbata' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['acqua'] }],
-    tr: { name: { pl: 'Czarna herbata', en: 'Black tea' }, desc: { en: 'Classic loose-leaf black tea.' } }
+    tr: { name: { pl: 'Czarna herbata', en: 'Black tea' }, desc: { en: 'Black tea.' } }
   },
   {
     id: 't2',
     cat: 'te',
     name: 'earl grey',
     pron: 'erl grej',
-    desc: 'Czarna herbata z bergamotką.',
+    desc: 'czarna herbata z bergamotką',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Aromatyzowana naturalnym olejkiem z bergamotki.',
-    ingIds: ['bergamotka', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['bergamotka', 'acqua'] }],
-    tr: { name: { pl: 'Herbata Earl Grey', en: 'Earl Grey tea' }, desc: { en: 'Black tea infused with bergamot.' } }
+    serviceNotes: 'Czarna herbata aromatyzowana bergamotką.',
+    ingIds: ['bergamotka'],
+    testDesc: [
+      'czarna herbata z ',
+      { ingId: 'bergamotka', text: 'bergamotką' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['bergamotka'] }],
+    tr: { name: { pl: 'Herbata Earl Grey', en: 'Earl Grey tea' }, desc: { en: 'Black tea with bergamot.' } }
   },
   {
     id: 't3',
     cat: 'te',
     name: 'tè verde',
     pron: 'te werde',
-    desc: 'Zielona herbata sencha.',
+    desc: 'zielona herbata sencha',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Szlachetna japońska zielona herbata Sencha.',
+    serviceNotes: 'Japońska zielona herbata Sencha.',
     ingIds: ['acqua'],
+    testDesc: [
+      'zielona herbata ',
+      { ingId: 'acqua', text: 'sencha' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['acqua'] }],
-    tr: { name: { pl: 'Zielona herbata sencha', en: 'Green tea sencha' }, desc: { en: 'Japanese green tea sencha.' } }
+    tr: { name: { pl: 'Zielona herbata sencha', en: 'Green tea sencha' }, desc: { en: 'Green tea sencha.' } }
   },
   {
     id: 't4',
     cat: 'te',
     name: 'paradiso',
     pron: 'paradizo',
-    desc: 'Czarna herbata, lawenda, kwiaty truskawki i kukurydzy.',
+    desc: 'czarna herbata, lawenda, kwiaty truskawki i kukurydzy',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Kwiatowo-owocowa kompozycja na bazie czarnej herbaty z nutą lawendy.',
+    serviceNotes: 'Kwiatowa mieszanka na bazie czarnej herbaty z lawendą.',
     ingIds: ['acqua'],
+    testDesc: [
+      'czarna herbata, lawenda, kwiaty ',
+      { ingId: 'acqua', text: 'truskawki i kukurydzy' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['acqua'] }],
-    tr: { name: { pl: 'Herbata Paradiso', en: 'Paradiso infusion' }, desc: { en: 'Black tea with lavender, strawberry flowers and cornflower.' } }
+    tr: { name: { pl: 'Herbata Paradiso', en: 'Paradiso infusion' }, desc: { en: 'Black tea, lavender, strawberry and cornflower.' } }
   },
   {
     id: 't5',
     cat: 'te',
     name: 'fiore bianco',
     pron: 'fiore bianko',
-    desc: 'Biała i zielona herbata, żółte owoce, płatki nagietka.',
+    desc: 'biała i zielona herbata, żółte owoce, płatki nagietka',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Delikatna mieszanka białej i zielonej herbaty z żółtymi owocami.',
+    serviceNotes: 'Mieszanka herbaty białej i zielonej z żółtymi owocami.',
     ingIds: ['acqua'],
+    testDesc: [
+      'biała i zielona herbata, żółte owoce, płatki ',
+      { ingId: 'acqua', text: 'nagietka' }
+    ],
     components: [{ name: 'Składniki', ingIds: ['acqua'] }],
-    tr: { name: { pl: 'Herbata Fiore Bianco', en: 'Fiore Bianco tea' }, desc: { en: 'White & green tea blend with yellow fruits and marigold petals.' } }
+    tr: { name: { pl: 'Herbata Fiore Bianco', en: 'Fiore Bianco tea' }, desc: { en: 'White & green tea with yellow fruits and marigold petals.' } }
   },
   {
     id: 't6',
     cat: 'te',
     name: 'riso e vaniglia',
     pron: 'rizo e wanilia',
-    desc: 'Zielona herbata z prażonym ryżem i wanilią (Genmaicha style).',
+    desc: 'zielona herbata z prażonym ryżem i wanilią',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Niezwykłe połączenie zielonej herbaty, chrupiącego prażonego ryżu i nuty wanilii.',
-    ingIds: ['ryz', 'wanilia', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['ryz', 'wanilia', 'acqua'] }],
+    serviceNotes: 'Zielona herbata z prażonym ryżem i nutą wanilii.',
+    ingIds: ['ryz', 'wanilia'],
+    testDesc: [
+      'zielona herbata z prażonym ',
+      { ingId: 'ryz', text: 'ryżem' },
+      ' i ',
+      { ingId: 'wanilia', text: 'wanilią' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['ryz', 'wanilia'] }],
     tr: { name: { pl: 'Herbata z ryżem i wanilią', en: 'Rice & vanilla green tea' }, desc: { en: 'Green tea with roasted rice and vanilla.' } }
   },
   {
@@ -1184,27 +1560,37 @@ export const ITEMS = [
     cat: 'te',
     name: 'palermo',
     pron: 'palermo',
-    desc: 'Trawa cytrynowa, eukaliptus i suszone mandarynki.',
+    desc: 'trawa cytrynowa, eukaliptus i suszone mandarynki',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Orzeźwiająca mieszanka ziołowo-cytrusowa z eukaliptusem i mandarynką.',
-    ingIds: ['arancia', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['arancia', 'acqua'] }],
-    tr: { name: { pl: 'Napar Palermo', en: 'Palermo infusion' }, desc: { en: 'Lemongrass, eucalyptus and dried mandarin infusion.' } }
+    serviceNotes: 'Ziołowy napar z trawy cytrynowej, eukaliptusa i mandarynek.',
+    ingIds: ['arancia'],
+    testDesc: [
+      'trawa cytrynowa, eukaliptus i suszone ',
+      { ingId: 'arancia', text: 'mandarynki' }
+    ],
+    components: [{ name: 'Składniki', ingIds: ['arancia'] }],
+    tr: { name: { pl: 'Napar Palermo', en: 'Palermo infusion' }, desc: { en: 'Lemongrass, eucalyptus and dried mandarins.' } }
   },
   {
     id: 't8',
     cat: 'te',
     name: 'menta',
     pron: 'menta',
-    desc: 'Mięta, skórka pomarańczy, róża i lukrecja.',
+    desc: 'mięta, skórka pomarańczy, róża i lukrecja',
     price: '14',
     veg: 'vg',
     allergens: [],
-    serviceNotes: 'Aromatyczny napar z liści mięty z cytrusowo-kwiatową nutą.',
-    ingIds: ['menta', 'arancia', 'acqua'],
-    components: [{ name: 'Składniki', ingIds: ['menta', 'arancia', 'acqua'] }],
-    tr: { name: { pl: 'Napar z mięty i ziół', en: 'Mint & citrus infusion' }, desc: { en: 'Mint, orange peel, rose and liquorice infusion.' } }
+    serviceNotes: 'Miętowy napar ze skórką pomarańczy i różą.',
+    ingIds: ['menta', 'arancia'],
+    testDesc: [
+      { ingId: 'menta', text: 'mięta' },
+      ', skórka ',
+      { ingId: 'arancia', text: 'pomarańczy' },
+      ', róża i lukrecja'
+    ],
+    components: [{ name: 'Składniki', ingIds: ['menta', 'arancia'] }],
+    tr: { name: { pl: 'Napar z mięty i ziół', en: 'Mint & citrus infusion' }, desc: { en: 'Mint, orange peel, rose and liquorice.' } }
   }
 ];

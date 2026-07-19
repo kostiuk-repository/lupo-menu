@@ -38,7 +38,10 @@ const state = {
   learnCat: (saved.learnCat && CATS.some(c => c.key === saved.learnCat)) ? saved.learnCat : CATS[0].key,
   catBatchIdx: Object.assign({}, saved.catBatchIdx || {}),
   learnIdx: 0,
-  t9Questions: null, t9Idx: 0, t9Score: 0, t9Results: [], t9Sel: null, t9MultiSel: {}, t9Checked: false, t9Drag: { placed: {} }, t9Done: false,
+  t9Questions: null,
+  t9Idx: 0,
+  t9Score: 0,
+  t9Done: false,
   _t9Batch: null,
   match: null,
   tipIdx: Math.floor(Math.random() * TIPS.length),
@@ -48,7 +51,14 @@ const state = {
 function byId(id) { return itemsById[id]; }
 function st(id) { return state.prog[id] || { box: 0, correct: 0, wrong: 0, seen: 0 }; }
 function poolIds() { return ITEMS.filter(i => state.cats[i.cat]).map(i => i.id); }
-function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function shuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
 function weight(id) { const p = st(id); let w = (6 - p.box); w = w * w; w += p.wrong * 3; if (!p.seen) w += 6; return Math.max(1, w); }
 function pick(pool, exclude) {
   let cs = pool.filter(id => id !== exclude); if (!cs.length) cs = pool.slice();
@@ -91,7 +101,7 @@ function closePhoto() {
   render();
 }
 
-// ---------- learn (infinite batch cycling, scoped to one category) ----------
+// ---------- learn (batching per category) ----------
 function catItemIds(catKey) { return ITEMS.filter(i => i.cat === catKey).map(i => i.id); }
 function catBatches(catKey) {
   const ids = catItemIds(catKey);
@@ -135,85 +145,174 @@ function selectLearnCat(key) {
   go('learn');
 }
 
-// ---------- test ----------
+// ---------- NEW FILL-IN-THE-BLANK DRAG & DROP TEST ----------
 function ensureTest() {
   const batchKey = currentBatch().join(',');
   if (!state.t9Questions || state.t9Done || state._t9Batch !== batchKey) buildTest9();
 }
-function makeTest9Questions(dishIds) {
-  const own = {};
-  dishIds.forEach(id => { own[id] = byId(id).ingIds; });
-  const qs = [];
 
-  dishIds.forEach(dishId => {
-    const mine = own[dishId];
-    const otherIds = dishIds.filter(x => x !== dishId);
-    let decoyPool = shuffle(Array.from(new Set(otherIds.flatMap(x => own[x]).filter(ing => mine.indexOf(ing) < 0))));
-    if (!decoyPool.length) decoyPool = shuffle(Object.keys(ING).filter(k => mine.indexOf(k) < 0));
-    const decoy = decoyPool[0];
-    const sampleOwn = shuffle(mine).slice(0, Math.min(3, mine.length));
-    const options = shuffle(sampleOwn.concat([decoy]));
-    qs.push({ type: 'single', dishId, options, correct: decoy });
+function makeTestQuestionForDish(dishId) {
+  const dish = byId(dishId);
+  const slots = [];
+  let sIdx = 0;
+  dish.testDesc.forEach(part => {
+    if (typeof part === 'object' && part.ingId) {
+      slots.push({
+        slotIdx: sIdx++,
+        ingId: part.ingId,
+        expectedText: part.text
+      });
+    }
   });
 
-  dishIds.forEach(dishId => {
-    const mine = own[dishId];
-    const otherIds = dishIds.filter(x => x !== dishId);
-    const decoyPool = shuffle(Array.from(new Set(otherIds.flatMap(x => own[x]).filter(ing => mine.indexOf(ing) < 0))));
-    const decoys = decoyPool.slice(0, 2);
-    const options = shuffle(mine.concat(decoys));
-    qs.push({ type: 'multi', dishId, options, correct: mine.slice() });
-  });
-
-  const allChips = shuffle(Array.from(new Set(dishIds.flatMap(id => own[id]))));
-  const chunk = Math.max(1, Math.ceil(allChips.length / 3));
-  for (let i = 0; i < 3; i++) {
-    const chips = allChips.slice(i * chunk, (i + 1) * chunk);
-    if (chips.length) qs.push({ type: 'drag', chips });
+  const neededIngs = slots.map(s => s.ingId);
+  const otherDishes = ITEMS.filter(i => i.cat === dish.cat && i.id !== dishId);
+  let decoyPool = Array.from(new Set(otherDishes.flatMap(i => i.ingIds).filter(id => neededIngs.indexOf(id) < 0)));
+  if (decoyPool.length < 3) {
+    decoyPool = Array.from(new Set(Object.keys(ING).filter(id => neededIngs.indexOf(id) < 0)));
   }
-  return qs;
+  const decoys = shuffle(decoyPool).slice(0, Math.max(2, 5 - slots.length));
+
+  const allIngs = shuffle([...neededIngs, ...decoys]);
+  const candidates = allIngs.map((ingId, idx) => ({
+    chipId: 'chip_' + idx,
+    ingId
+  }));
+
+  return {
+    dishId,
+    dish,
+    slots,
+    candidates,
+    placed: {}, // slotIdx -> chipId
+    selectedChip: null,
+    checked: false,
+    status: 'unanswered', // 'unanswered' | 'correct' | 'wrong' | 'revealed'
+    result: null
+  };
 }
+
 function buildTest9() {
   const batch = currentBatch();
   state._t9Batch = batch.join(',');
-  state.t9Questions = makeTest9Questions(batch);
-  state.t9Idx = 0; state.t9Score = 0; state.t9Results = new Array(state.t9Questions.length).fill(null);
-  state.t9Sel = null; state.t9MultiSel = {}; state.t9Checked = false; state.t9Drag = { placed: {} }; state.t9Done = false;
+  state.t9Questions = batch.map(makeTestQuestionForDish);
+  state.t9Idx = 0;
+  state.t9Score = 0;
+  state.t9Done = false;
 }
-function retryTest() { buildTest9(); render(); }
-function currentQ() { return state.t9Questions ? state.t9Questions[state.t9Idx] : null; }
-function commitAnswer(correct) {
-  const results = state.t9Results.slice(); results[state.t9Idx] = correct;
+
+function currentQ() {
+  return (state.t9Questions && state.t9Questions[state.t9Idx]) ? state.t9Questions[state.t9Idx] : null;
+}
+
+function placeChip(slotIdx, chipId) {
   const q = currentQ();
-  if (q && q.dishId) record(q.dishId, correct);
-  state.t9Checked = true; state.t9Results = results; state.t9Score += correct ? 1 : 0;
+  if (!q || q.checked || q.status === 'revealed') return;
+  // If chip was placed in another slot, unplace it
+  Object.keys(q.placed).forEach(k => {
+    if (q.placed[k] === chipId) delete q.placed[k];
+  });
+  q.placed[slotIdx] = chipId;
+  q.selectedChip = null;
   render();
 }
-function selectSingle(val) { if (state.t9Checked) return; state.t9Sel = val; render(); }
-function checkSingle() { const q = currentQ(); if (!q || state.t9Sel == null || state.t9Checked) return; commitAnswer(state.t9Sel === q.correct); }
-function toggleMulti(val) { if (state.t9Checked) return; state.t9MultiSel[val] = !state.t9MultiSel[val]; render(); }
-function checkMulti() {
-  const q = currentQ(); if (!q || state.t9Checked) return;
-  const chosen = q.options.filter(o => state.t9MultiSel[o]);
-  const ok = chosen.length === q.correct.length && chosen.every(o => q.correct.indexOf(o) >= 0);
-  commitAnswer(ok);
-}
-function dropChip(ingId, zoneKey) {
-  const q = currentQ(); if (!q || q.type !== 'drag' || state.t9Checked) return;
-  const ok = byId(zoneKey).ingIds.indexOf(ingId) >= 0;
-  state.t9Drag.placed[ingId] = { zone: zoneKey, ok };
-  const allPlaced = q.chips.every(c => state.t9Drag.placed[c]);
+
+function unplaceSlot(slotIdx) {
+  const q = currentQ();
+  if (!q || q.checked || q.status === 'revealed') return;
+  delete q.placed[slotIdx];
   render();
-  if (allPlaced) {
-    const correctCount = q.chips.filter(c => state.t9Drag.placed[c].ok).length;
-    commitAnswer(correctCount === q.chips.length);
+}
+
+function selectChip(chipId) {
+  const q = currentQ();
+  if (!q || q.checked || q.status === 'revealed') return;
+  if (q.selectedChip === chipId) {
+    q.selectedChip = null;
+  } else {
+    q.selectedChip = chipId;
+    // Auto-place into first empty slot
+    const emptySlot = q.slots.find(s => !q.placed[s.slotIdx]);
+    if (emptySlot) {
+      placeChip(emptySlot.slotIdx, chipId);
+      return;
+    }
   }
-}
-function nextQuestion() {
-  const idx = state.t9Idx;
-  if (!state.t9Questions || idx >= state.t9Questions.length - 1) { state.t9Done = true; render(); return; }
-  state.t9Idx = idx + 1; state.t9Sel = null; state.t9MultiSel = {}; state.t9Checked = false; state.t9Drag = { placed: {} };
   render();
+}
+
+function checkTestAnswer() {
+  const q = currentQ();
+  if (!q || q.checked) return;
+  
+  let allOk = true;
+  q.slots.forEach(s => {
+    const placedChipId = q.placed[s.slotIdx];
+    const placedChip = q.candidates.find(c => c.chipId === placedChipId);
+    if (!placedChip || placedChip.ingId !== s.ingId) {
+      allOk = false;
+    }
+  });
+
+  q.checked = true;
+  q.result = allOk;
+
+  if (allOk) {
+    q.status = 'correct';
+    state.t9Score++;
+    record(q.dishId, true);
+  } else {
+    q.status = 'wrong';
+    record(q.dishId, false);
+  }
+  render();
+}
+
+function retryTestQuestion() {
+  const q = currentQ();
+  if (!q) return;
+  q.checked = false;
+  q.status = 'unanswered';
+  q.result = null;
+  // Remove wrong placements
+  q.slots.forEach(s => {
+    const placedChipId = q.placed[s.slotIdx];
+    const placedChip = q.candidates.find(c => c.chipId === placedChipId);
+    if (!placedChip || placedChip.ingId !== s.ingId) {
+      delete q.placed[s.slotIdx];
+    }
+  });
+  render();
+}
+
+function revealTestQuestion() {
+  const q = currentQ();
+  if (!q) return;
+  q.checked = true;
+  q.status = 'revealed';
+  // Fill correct candidates into slots
+  q.slots.forEach(s => {
+    const matchingChip = q.candidates.find(c => c.ingId === s.ingId);
+    if (matchingChip) {
+      q.placed[s.slotIdx] = matchingChip.chipId;
+    }
+  });
+  render();
+}
+
+function restartTestBatch() {
+  buildTest9();
+  render();
+}
+
+function nextTestQuestion() {
+  if (state.t9Idx < state.t9Questions.length - 1) {
+    state.t9Idx++;
+    render();
+  } else {
+    state.t9Done = true;
+    render();
+  }
 }
 
 // ---------- match ----------
@@ -476,86 +575,132 @@ function renderTest() {
   if (state.t9Done) return renderTestDone();
   const q = currentQ();
   if (!q) return '';
-  const checked = state.t9Checked;
-  const dishLabel = q.dishId ? byId(q.dishId).name : '';
+
   const total = state.t9Questions.length;
   const progressPct = Math.round(state.t9Idx / total * 100);
-  const typeLabel = q.type === 'single' ? '1 z 4' : (q.type === 'multi' ? 'Zaznacz kilka' : 'Przeciągnij');
+  const isChecked = q.checked || q.status === 'revealed';
 
-  let body = '';
-  if (q.type === 'single') {
-    const optionsHtml = q.options.map(oid => {
-      const ing = ING[oid] || { it: oid, pl: oid };
-      let cls = 'option';
-      if (!checked) cls += (state.t9Sel === oid ? ' sel' : '');
-      else if (oid === q.correct) cls += ' correct';
-      else if (oid === state.t9Sel) cls += ' wrong';
-      else cls += ' dim';
-      return `<button class="${cls}" data-action="selectSingle" data-id="${oid}">${esc(ing.it)} · ${esc(ing.pl)}</button>`;
-    }).join('');
-    body = `<div class="card"><div class="serif" style="font-size:19px;font-weight:600;color:#2A2521;line-height:1.35;">Który składnik NIE wchodzi w skład dania «${esc(dishLabel)}»?</div></div>
-      <div style="display:flex;flex-direction:column;gap:10px;">${optionsHtml}</div>
-      ${(!checked && state.t9Sel != null) ? '<button class="btn btn-dark btn-block" data-action="checkSingle">Sprawdź</button>' : ''}`;
-  } else if (q.type === 'multi') {
-    const optionsHtml = q.options.map(oid => {
-      const ing = ING[oid] || { it: oid, pl: oid };
-      const sel = !!state.t9MultiSel[oid];
-      const isCorrect = q.correct.indexOf(oid) >= 0;
-      let cls = 'option multi';
-      if (checked) { if (isCorrect) cls += ' correct'; else if (sel) cls += ' wrong'; else cls += ' dim'; }
-      else if (sel) cls += ' sel';
-      return `<button class="${cls}" data-action="toggleMulti" data-id="${oid}"><span>${sel ? '☑' : '☐'}</span>${esc(ing.it)} · ${esc(ing.pl)}</button>`;
-    }).join('');
-    const anySel = Object.keys(state.t9MultiSel).some(k => state.t9MultiSel[k]);
-    body = `<div class="card"><div class="serif" style="font-size:19px;font-weight:600;color:#2A2521;line-height:1.35;">Zaznacz WSZYSTKIE składniki dania «${esc(dishLabel)}»</div></div>
-      <div style="display:flex;flex-direction:column;gap:10px;">${optionsHtml}</div>
-      ${(!checked && anySel) ? '<button class="btn btn-dark btn-block" data-action="checkMulti">Sprawdź</button>' : ''}`;
-  } else {
-    const placed = state.t9Drag.placed;
-    const batchDishes = currentBatch().map(byId);
-    const chipsHtml = q.chips.filter(c => !placed[c]).map(c => {
-      const ing = ING[c] || { it: c, pl: c, icon: 'verdure.svg' };
-      return `<button class="drag-chip" data-drag-id="${c}"><img src="${ico(ing.icon)}" /><span>${esc(ing.it)}</span><span class="chip-pl">${esc(ing.pl)}</span></button>`;
-    }).join('');
-    const zonesHtml = currentBatch().map(id => {
-      const it = byId(id);
-      const items = q.chips.filter(c => placed[c] && placed[c].zone === id);
-      const itemsHtml = items.map(c => {
-        const ing = ING[c] || { it: c, pl: c, icon: 'verdure.svg' };
-        const info = placed[c];
-        const correctDish = info.ok ? null : batchDishes.find(d => d.ingIds.indexOf(c) >= 0);
-        return `<span class="placed-item ${info.ok ? 'ok' : 'bad'}"><img src="${ico(ing.icon)}" /><span class="mark">${info.ok ? '✓' : '✗'}</span>${esc(ing.it)} · ${esc(ing.pl)}${correctDish ? `<span class="hint">→ ${esc(correctDish.name)}</span>` : ''}</span>`;
-      }).join('');
-      return `<div class="drop-zone" data-zone="${id}">
-        <div class="serif" style="font-size:14px;font-weight:600;color:#2A2521;">${esc(it.name)}</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">${itemsHtml}</div>
-      </div>`;
-    }).join('');
-    body = `<div class="card" style="padding:16px 20px;"><div class="serif" style="font-size:17px;font-weight:600;color:#2A2521;line-height:1.35;">Przeciągnij każdy składnik do właściwego dania</div></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;min-height:64px;">${chipsHtml}</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">${zonesHtml}</div>`;
+  // Build the menu description with embedded drop slots
+  const descPartsHtml = q.dish.testDesc.map(part => {
+    if (typeof part === 'string') {
+      return esc(part);
+    }
+    // Slot object
+    const slotObj = q.slots.find(s => s.ingId === part.ingId && s.expectedText === part.text);
+    const slotIdx = slotObj ? slotObj.slotIdx : 0;
+    const placedChipId = q.placed[slotIdx];
+    const placedChip = placedChipId ? q.candidates.find(c => c.chipId === placedChipId) : null;
+    const placedIng = placedChip ? (ING[placedChip.ingId] || { it: placedChip.ingId, pl: placedChip.ingId, icon: 'verdure.svg' }) : null;
+
+    let slotCls = 'test-slot';
+    if (!placedChip) {
+      slotCls += ' empty';
+    } else {
+      slotCls += ' filled';
+      if (isChecked) {
+        if (placedChip.ingId === slotObj.ingId) {
+          slotCls += ' correct';
+        } else {
+          slotCls += ' wrong';
+        }
+      }
+    }
+
+    if (!placedChip) {
+      return `<span class="${slotCls}" data-slot-idx="${slotIdx}" data-action="unplaceSlot">
+        <span class="slot-placeholder">___</span>
+      </span>`;
+    } else {
+      return `<span class="${slotCls}" data-slot-idx="${slotIdx}" data-action="unplaceSlot">
+        <img src="${ico(placedIng.icon)}" alt="${esc(placedIng.it)}" />
+        <span class="slot-text">${esc(placedIng.it)}</span>
+        ${isChecked ? (placedChip.ingId === slotObj.ingId ? '<span class="mark">✓</span>' : '<span class="mark">✗</span>') : '<span class="remove-btn">×</span>'}
+      </span>`;
+    }
+  }).join('');
+
+  // Build candidate chips pool
+  const usedChipIds = new Set(Object.values(q.placed));
+  const candidateChipsHtml = q.candidates.map(c => {
+    const isUsed = usedChipIds.has(c.chipId);
+    const ing = ING[c.ingId] || { it: c.ingId, pl: c.ingId, icon: 'verdure.svg' };
+    const isSel = q.selectedChip === c.chipId;
+
+    let chipCls = 'candidate-chip';
+    if (isUsed) chipCls += ' used';
+    if (isSel) chipCls += ' sel';
+
+    return `<button class="${chipCls}" draggable="${!isUsed && !isChecked}" data-chip-id="${c.chipId}" data-action="selectChip" data-id="${c.chipId}">
+      <img src="${ico(ing.icon)}" alt="${esc(ing.it)}" />
+      <div style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;line-height:1.2;">
+        <span style="font-family:'Spectral',serif;font-weight:600;font-size:13.5px;color:#2A2521;">${esc(ing.it)}</span>
+        <span style="font-size:11px;color:#9A9086;">${esc(ing.pl)}</span>
+      </div>
+    </button>`;
+  }).join('');
+
+  // Calculate if all slots are filled
+  const allSlotsFilled = q.slots.every(s => !!q.placed[s.slotIdx]);
+
+  // Build feedback & action controls
+  let controlsHtml = '';
+  if (!isChecked) {
+    controlsHtml = `<button class="btn btn-dark btn-block" data-action="checkTestAnswer" ${allSlotsFilled ? '' : 'disabled style="opacity:0.5;cursor:not-allowed;"'}>
+      ${allSlotsFilled ? 'Sprawdź opisy →' : 'Uzupełnij wszystkie luki (___)'}
+    </button>`;
+  } else if (q.status === 'correct') {
+    controlsHtml = `<div class="card card-tight" style="background:#E4ECDD;border-color:#CBDCC0;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-weight:600;color:#3B5A36;font-size:15px;">✨ Świetnie! Opis uzupełniony bezbłędnie.</div>
+      <button class="btn btn-primary btn-block" data-action="nextTestQuestion">Dalej →</button>
+    </div>`;
+  } else if (q.status === 'wrong') {
+    controlsHtml = `<div class="card card-tight" style="background:#FDF3F2;border-color:#F2C9C4;display:flex;flex-direction:column;gap:10px;">
+      <div style="font-weight:600;color:#8C3A32;font-size:14.5px;">❌ Niestety nie do końca poprawnie. Co chcesz zrobić?</div>
+      <div class="test-3-options">
+        <button class="btn btn-outline btn-block" data-action="retryTestQuestion" style="justify-content:flex-start;display:flex;align-items:center;gap:8px;font-size:14px;padding:12px 14px;">
+          <span>🔄</span> <span>Spróbuj ponownie</span>
+        </button>
+        <button class="btn btn-outline btn-block" data-action="revealTestQuestion" style="justify-content:flex-start;display:flex;align-items:center;gap:8px;font-size:14px;padding:12px 14px;">
+          <span>💡</span> <span>Pokaż poprawną odpowiedź</span>
+        </button>
+        <button class="btn btn-outline btn-block" data-action="restartTestBatch" style="justify-content:flex-start;display:flex;align-items:center;gap:8px;font-size:14px;padding:12px 14px;">
+          <span>⏪</span> <span>Zacznij od nowa</span>
+        </button>
+      </div>
+    </div>`;
+  } else if (q.status === 'revealed') {
+    controlsHtml = `<div class="card card-tight" style="background:#FAF5ED;border-color:#E9DFCF;display:flex;flex-direction:column;gap:8px;">
+      <div style="font-weight:600;color:#8C5E29;font-size:14.5px;">💡 Oto poprawny opis z karty menu. Zapamiętaj składniki i przejdź dalej.</div>
+      <button class="btn btn-primary btn-block" data-action="nextTestQuestion">Dalej →</button>
+    </div>`;
   }
-
-  const feedback = checked ? `<div style="display:flex;flex-direction:column;gap:11px;padding-top:2px;">
-      <div class="serif" style="font-size:17px;font-weight:600;color:${state.t9Results[state.t9Idx] ? '#4F7A52' : '#B0524C'};">${state.t9Results[state.t9Idx] ? 'Dobrze!' : 'Prawie — sprawdź poprawne odpowiedzi powyżej.'}</div>
-      <button class="btn btn-dark btn-block" data-action="nextQuestion">Dalej →</button>
-    </div>` : '';
 
   return `<div style="display:flex;flex-direction:column;gap:15px;">
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span class="kicker">Pytanie ${state.t9Idx + 1} / ${total} · ${esc(catTitle(state.learnCat))}</span>
-      <span style="font-size:12px;color:#9A9086;">${typeLabel}</span>
+      <span class="kicker">Test ${state.t9Idx + 1} / ${total} · ${esc(catTitle(state.learnCat))}</span>
+      <span style="font-size:12px;color:#9A9086;">Przeciągnij składniki w puste pola ___</span>
     </div>
     <div class="progressbar"><i style="width:${progressPct}%;"></i></div>
-    ${body}
-    ${feedback}
+
+    <div class="card test-menu-card">
+      <div class="kicker-sm" style="color:#B08A5A;margin-bottom:6px;">Uzupełnij opis dania w karcie menu</div>
+      <div class="serif" style="font-size:24px;font-weight:600;color:#2A2521;margin-bottom:12px;">${esc(q.dish.name)}</div>
+      <div class="test-desc-body">${descPartsHtml}</div>
+    </div>
+
+    ${!isChecked ? `<div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="kicker-sm" style="padding:0 4px;color:#8C5E29;">Dostępne składniki do przeciągnięcia lub kliknięcia:</div>
+      <div class="candidate-pool">${candidateChipsHtml}</div>
+    </div>` : ''}
+
+    ${controlsHtml}
   </div>`;
 }
 
 function renderTestDone() {
   const score = state.t9Score, total = state.t9Questions.length;
   const pct = Math.round(score / total * 100);
-  const headline = score === total ? 'Perfekcyjnie! Znasz te dania na wylot.' : (score >= total * 0.6 ? 'Dobra robota!' : 'Warto powtórzyć — spróbuj jeszcze raz.');
+  const headline = score === total ? 'Perfekcyjnie! Znasz te opisy na wylot.' : (score >= total * 0.6 ? 'Dobra robota!' : 'Warto powtórzyć — spróbuj jeszcze raz.');
   return `<div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding-top:16px;">
     <div class="result-ring">
       <div class="ring" style="background:conic-gradient(var(--accent) ${pct}%, #E9DFCF ${pct}%);"></div>
@@ -564,7 +709,7 @@ function renderTestDone() {
     <div class="serif" style="font-size:19px;color:#2A2521;text-align:center;">${esc(headline)}</div>
     <button class="btn btn-primary btn-block" data-action="advanceBatch">Kolejna grupa dań →</button>
     <div class="btn-row" style="width:100%;">
-      <button class="btn btn-outline" data-action="retryTest">Powtórz test</button>
+      <button class="btn btn-outline" data-action="restartTestBatch">Powtórz test</button>
       <button class="btn btn-outline" data-action="go" data-id="learn">Wróć do nauki</button>
     </div>
   </div>`;
@@ -601,216 +746,140 @@ function renderMatch() {
   </div>`;
 }
 
-function renderBrowse() {
-  const groups = CATS.map(c => {
-    const its = ITEMS.filter(i => i.cat === c.key);
-    const itemsHtml = its.map(i => {
-      const allergens = (i.allergens && i.allergens.length)
-        ? i.allergens.map(a => `<span class="allergen-pill-sm">${esc(a)}</span>`).join('')
-        : `<span class="allergen-pill-sm none">brak</span>`;
-      const pastaTag = i.pastaType
-        ? `<span class="pasta-pill-sm">${i.pastaType === 'jajeczny' ? '🥚 jajeczny' : '🌾 bezjajeczny'}</span>`
-        : '';
+function render() {
+  const isHome = state.screen === 'home';
+  const isLearn = state.screen === 'learn';
+  const isTest = state.screen === 'test';
+  const isMatch = state.screen === 'match';
 
-      const photoBtn = i.hasPhoto
-        ? `<button class="btn-photo" data-action="openPhoto" data-id="${i.id}">📷 Zobacz zdjęcie</button>`
-        : '';
+  let content = '';
+  if (isHome) content = renderHome();
+  else if (isLearn) content = renderLearn();
+  else if (isTest) content = renderTest();
+  else if (isMatch) content = renderMatch();
 
-      const compSummary = i.components ? i.components.map(comp => {
-        const ingNames = comp.ingIds.map(iid => (ING[iid] ? ING[iid].pl : iid)).join(', ');
-        return `<div style="font-size:11.5px;color:#5E554B;line-height:1.4;"><strong style="color:#7A4E1B;">${esc(comp.name)}:</strong> ${esc(ingNames)}</div>`;
-      }).join('') : '';
+  const totalMastered = ITEMS.filter(i => st(i.id).box >= 4).length;
 
-      return `<div style="display:flex;gap:11px;background:#FFFFFF;border:1px solid #EAE2D5;border-radius:16px;padding:14px;">
-        <span style="width:10px;height:10px;border-radius:50%;background:${dotColor(st(i.id).box)};flex:none;margin-top:6px;"></span>
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;">
-          <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline;">
-            <span class="serif" style="font-size:16.5px;font-weight:600;color:#2A2521;">${esc(i.name)}</span>
-            <span style="font-size:13.5px;color:#9A9086;white-space:nowrap;flex:none;font-weight:600;">${esc(i.price)} zł</span>
-          </div>
-          <div class="serif" style="font-style:italic;font-size:13px;color:#B08A5A;">${esc(i.pron)}</div>
-          <div style="font-size:13px;line-height:1.5;color:#4A433B;">${esc(i.desc)}</div>
-          
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px;">
-            ${i.veg ? `<span class="veg-badge">${esc(vegLabel(i.veg))}</span>` : ''}
-            ${pastaTag}
-            ${photoBtn}
-          </div>
-
-          ${compSummary ? `<div style="background:#FAF6F0;border-left:2.5px solid #C1741F;padding:7px 10px;border-radius:6px;margin-top:3px;display:flex;flex-direction:column;gap:3px;">${compSummary}</div>` : ''}
-
-          ${i.serviceNotes ? `<div style="font-size:11.5px;line-height:1.4;color:#B07219;background:#FFFDF7;border-left:3px solid #E2A042;padding:5px 8px;border-radius:4px;margin-top:2px;">💡 ${esc(i.serviceNotes)}</div>` : ''}
-
-          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px;color:#9A9086;">
-            <span>Alergeny:</span>
-            <div style="display:flex;gap:4px;flex-wrap:wrap;">${allergens}</div>
+  let modalHtml = '';
+  if (state.photoModalId) {
+    const item = byId(state.photoModalId);
+    if (item) {
+      modalHtml = `<div class="photo-modal-overlay" data-action="closePhoto">
+        <div class="photo-modal-content" onclick="event.stopPropagation()">
+          <button class="photo-modal-close" data-action="closePhoto">✕</button>
+          <img src="assets/photos/${item.id}.jpg" alt="${esc(item.name)}" class="photo-modal-img" />
+          <div class="photo-modal-info">
+            <div class="serif" style="font-size:20px;font-weight:600;color:#2A2521;">${esc(item.name)}</div>
+            <div style="font-size:13px;color:#6E655C;">${esc(item.desc)}</div>
           </div>
         </div>
       </div>`;
-    }).join('');
-
-    return `<div style="display:flex;flex-direction:column;gap:13px;">
-      <div style="display:flex;align-items:baseline;gap:9px;border-bottom:1.5px solid #E3D9C9;padding-bottom:7px;margin-top:6px;">
-        <span class="serif" style="font-size:22px;font-weight:600;color:#2A2521;">${esc(c.title)}</span>
-        <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#B08A5A;font-weight:700;">${esc(c.sub)}</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px;">${itemsHtml}</div>
-    </div>`;
-  }).join('');
-
-  return `<div style="display:flex;flex-direction:column;gap:22px;">
-    ${groups}
-    <div style="font-size:11.5px;line-height:1.5;color:#B0A69A;text-align:center;padding-top:4px;">Kropka po lewej wskazuje poziom opanowania w nauce. Dane zebrane ściśle z PDF menu Lupo.</div>
-  </div>`;
-}
-
-function renderPhotoModal() {
-  if (!state.photoModalId) return '';
-  const item = byId(state.photoModalId);
-  if (!item || !item.hasPhoto) return '';
-
-  return `<div class="photo-modal-overlay" data-action="closePhoto">
-    <div class="photo-modal-content">
-      <button class="photo-modal-close" data-action="closePhoto" title="Zamknij">✕</button>
-      <img class="photo-modal-img" src="assets/photos/${item.id}.jpg" alt="${esc(item.name)}" />
-      <div class="photo-modal-info">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
-          <span class="serif" style="font-size:20px;font-weight:600;color:#2A2521;">${esc(item.name)}</span>
-          <span style="font-size:15px;font-weight:700;color:#C1741F;flex:none;">${esc(item.price)} zł</span>
-        </div>
-        <div class="serif" style="font-style:italic;font-size:13.5px;color:#A08A6E;">${esc(item.pron)}</div>
-        <div style="font-size:12.5px;color:#6E655C;margin-top:4px;line-height:1.4;">🇵🇱 ${esc(item.tr.name.pl)}</div>
-      </div>
-    </div>
-  </div>`;
-}
-
-const TITLES = { home: 'Twój postęp', learn: 'Nauka dania', test: 'Test', match: 'Dopasuj', browse: 'Karta Lupo' };
-const NAV_DEFS = [['home', 'Postęp'], ['learn', 'Nauka'], ['test', 'Test'], ['match', 'Dopasuj'], ['browse', 'Karta']];
-
-function render() {
-  const mastered = ITEMS.filter(i => st(i.id).box >= 4).length;
-  const overallPct = Math.round(mastered / ITEMS.length * 100);
-  let body;
-  if (state.screen === 'home') body = renderHome();
-  else if (state.screen === 'learn') body = renderLearn();
-  else if (state.screen === 'test') body = renderTest();
-  else if (state.screen === 'match') body = renderMatch();
-  else body = renderBrowse();
-
-  const navHtml = NAV_DEFS.map(([key, label]) => `<button class="nav-btn ${state.screen === key ? 'active' : ''}" data-action="go" data-id="${key}"><span class="bar"></span>${label}</button>`).join('');
+    }
+  }
 
   root.innerHTML = `
     <header class="app-header">
-      <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-        <div class="app-title">${TITLES[state.screen] || ''}</div>
-        <div class="app-sub">Lupo · nauka menu</div>
+      <div>
+        <div class="app-title">Lupo · Menu</div>
+        <div class="app-sub">Aplikacja kelnerska</div>
       </div>
-      <div class="head-pill"><span class="dot"></span><span class="val">${overallPct}%</span></div>
+      <div class="head-pill">
+        <span class="dot"></span>
+        <span class="val">${totalMastered} / ${ITEMS.length}</span>
+      </div>
     </header>
-    <main class="app-main">${body}</main>
-    <nav class="app-nav">${navHtml}</nav>
-    ${renderPhotoModal()}
+    <main class="app-main">
+      ${content}
+    </main>
+    <nav class="app-nav">
+      <button class="nav-btn ${isHome ? 'active' : ''}" data-action="go" data-id="home"><div class="bar"></div>Główna</button>
+      <button class="nav-btn ${isLearn ? 'active' : ''}" data-action="go" data-id="learn"><div class="bar"></div>Nauka</button>
+      <button class="nav-btn ${isTest ? 'active' : ''}" data-action="go" data-id="test"><div class="bar"></div>Test</button>
+      <button class="nav-btn ${isMatch ? 'active' : ''}" data-action="go" data-id="match"><div class="bar"></div>Dopasuj</button>
+    </nav>
+    ${modalHtml}
   `;
 }
 
-// ================= EVENTS =================
-const ACTIONS = {
-  go: (id) => go(id),
-  toggleCat: (id) => toggleCat(id),
-  selectLearnCat: (id) => selectLearnCat(id),
-  resetProgress: () => resetProgress(),
-  learnNext: () => learnNext(),
-  learnPrev: () => learnPrev(),
-  advanceBatch: () => advanceBatch(),
-  retryTest: () => retryTest(),
-  selectSingle: (id) => selectSingle(id),
-  checkSingle: () => checkSingle(),
-  toggleMulti: (id) => toggleMulti(id),
-  checkMulti: () => checkMulti(),
-  nextQuestion: () => nextQuestion(),
-  pickLeft: (id) => pickLeft(id),
-  pickRight: (id) => pickRight(id),
-  newMatchRound: () => { buildMatch(); render(); },
-  openPhoto: (id) => openPhoto(id),
-  closePhoto: () => closePhoto()
-};
+// Global Event Listeners (Clicks & Drag and Drop)
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const act = btn.getAttribute('data-action');
+  const id = btn.getAttribute('data-id');
 
-root.addEventListener('click', (e) => {
-  // Check close photo explicitly first
-  const closeBtn = e.target.closest('[data-action="closePhoto"]');
-  if (closeBtn) {
-    e.stopPropagation();
-    ACTIONS.closePhoto();
-    return;
+  if (act === 'go') go(id);
+  else if (act === 'selectLearnCat') selectLearnCat(id);
+  else if (act === 'toggleCat') toggleCat(id);
+  else if (act === 'resetProgress') resetProgress();
+  else if (act === 'learnNext') learnNext();
+  else if (act === 'learnPrev') learnPrev();
+  else if (act === 'advanceBatch') advanceBatch();
+  else if (act === 'openPhoto') openPhoto(id);
+  else if (act === 'closePhoto') closePhoto();
+  else if (act === 'pickLeft') pickLeft(id);
+  else if (act === 'pickRight') pickRight(id);
+  else if (act === 'newMatchRound') { state.match = null; ensureMatch(); render(); }
+  // Test actions
+  else if (act === 'selectChip') selectChip(id);
+  else if (act === 'unplaceSlot') {
+    const slotIdx = parseInt(btn.getAttribute('data-slot-idx'), 10);
+    unplaceSlot(slotIdx);
   }
-  // Check if click was inside photo modal content box
-  const modalContent = e.target.closest('.photo-modal-content');
-  if (modalContent) {
-    // clicked inside modal card body, do not close modal
-    return;
-  }
-  // Check if click was on dark modal backdrop
-  const modalOverlay = e.target.closest('.photo-modal-overlay');
-  if (modalOverlay) {
-    ACTIONS.closePhoto();
-    return;
-  }
-
-  const el = e.target.closest('[data-action]');
-  if (!el || el.disabled) return;
-  const action = el.getAttribute('data-action');
-  const id = el.getAttribute('data-id');
-  const fn = ACTIONS[action];
-  if (fn) fn(id);
+  else if (act === 'checkTestAnswer') checkTestAnswer();
+  else if (act === 'retryTestQuestion') retryTestQuestion();
+  else if (act === 'revealTestQuestion') revealTestQuestion();
+  else if (act === 'restartTestBatch') restartTestBatch();
+  else if (act === 'nextTestQuestion') nextTestQuestion();
 });
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && state.photoModalId) {
-    closePhoto();
+// HTML5 Drag and Drop Handlers
+let draggedChipId = null;
+
+document.addEventListener('dragstart', e => {
+  const chip = e.target.closest('.candidate-chip');
+  if (chip) {
+    draggedChipId = chip.getAttribute('data-chip-id');
+    e.dataTransfer.setData('text/plain', draggedChipId);
+    chip.style.opacity = '0.5';
   }
 });
 
-// pointer-based drag & drop for the "drag" question type
-root.addEventListener('pointerdown', (e) => {
-  const chip = e.target.closest('[data-drag-id]');
-  if (!chip) return;
-  const q = currentQ();
-  if (!q || q.type !== 'drag' || state.t9Checked) return;
-  const ingId = chip.getAttribute('data-drag-id');
-  if (state.t9Drag.placed[ingId]) return;
-
-  e.preventDefault();
-  const rect = chip.getBoundingClientRect();
-  const ghost = chip.cloneNode(true);
-  Object.assign(ghost.style, {
-    position: 'fixed', left: rect.left + 'px', top: rect.top + 'px', width: rect.width + 'px',
-    margin: '0', pointerEvents: 'none', zIndex: '9999', opacity: '0.96',
-    boxShadow: '0 14px 28px rgba(42,37,33,.28)', transform: 'scale(1.05)', transition: 'none'
-  });
-  document.body.appendChild(ghost);
-  chip.style.opacity = '0.25';
-  const offX = e.clientX - rect.left, offY = e.clientY - rect.top;
-
-  function move(ev) {
-    ghost.style.left = (ev.clientX - offX) + 'px';
-    ghost.style.top = (ev.clientY - offY) + 'px';
-    document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('hover'));
-    const el = document.elementFromPoint(ev.clientX, ev.clientY);
-    const zone = el && el.closest('[data-zone]');
-    if (zone) zone.classList.add('hover');
+document.addEventListener('dragend', e => {
+  const chip = e.target.closest('.candidate-chip');
+  if (chip) {
+    chip.style.opacity = '1';
+    draggedChipId = null;
   }
-  function up(ev) {
-    document.removeEventListener('pointermove', move);
-    document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('hover'));
-    ghost.remove();
-    const el = document.elementFromPoint(ev.clientX, ev.clientY);
-    const zone = el && el.closest('[data-zone]');
-    const zoneKey = zone ? zone.getAttribute('data-zone') : null;
-    if (zoneKey) dropChip(ingId, zoneKey);
-  }
-  document.addEventListener('pointermove', move);
-  document.addEventListener('pointerup', up, { once: true });
 });
 
+document.addEventListener('dragover', e => {
+  const slot = e.target.closest('.test-slot');
+  if (slot) {
+    e.preventDefault();
+    slot.classList.add('drag-over');
+  }
+});
+
+document.addEventListener('dragleave', e => {
+  const slot = e.target.closest('.test-slot');
+  if (slot) {
+    slot.classList.remove('drag-over');
+  }
+});
+
+document.addEventListener('drop', e => {
+  const slot = e.target.closest('.test-slot');
+  if (slot) {
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    const slotIdx = parseInt(slot.getAttribute('data-slot-idx'), 10);
+    const chipId = e.dataTransfer.getData('text/plain') || draggedChipId;
+    if (chipId != null && !isNaN(slotIdx)) {
+      placeChip(slotIdx, chipId);
+    }
+  }
+});
+
+// Initial Render
 render();
