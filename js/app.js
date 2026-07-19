@@ -670,7 +670,7 @@ function renderPhotoModal() {
   if (!item || !item.hasPhoto) return '';
 
   return `<div class="photo-modal-overlay" data-action="closePhoto">
-    <div class="photo-modal-content" onclick="event.stopPropagation()">
+    <div class="photo-modal-content">
       <button class="photo-modal-close" data-action="closePhoto" title="Zamknij">✕</button>
       <img class="photo-modal-img" src="assets/photos/${item.id}.jpg" alt="${esc(item.name)}" />
       <div class="photo-modal-info">
@@ -737,6 +737,26 @@ const ACTIONS = {
 };
 
 root.addEventListener('click', (e) => {
+  // Check close photo explicitly first
+  const closeBtn = e.target.closest('[data-action="closePhoto"]');
+  if (closeBtn) {
+    e.stopPropagation();
+    ACTIONS.closePhoto();
+    return;
+  }
+  // Check if click was inside photo modal content box
+  const modalContent = e.target.closest('.photo-modal-content');
+  if (modalContent) {
+    // clicked inside modal card body, do not close modal
+    return;
+  }
+  // Check if click was on dark modal backdrop
+  const modalOverlay = e.target.closest('.photo-modal-overlay');
+  if (modalOverlay) {
+    ACTIONS.closePhoto();
+    return;
+  }
+
   const el = e.target.closest('[data-action]');
   if (!el || el.disabled) return;
   const action = el.getAttribute('data-action');
